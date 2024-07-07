@@ -3,19 +3,22 @@ body {
   background-color: #f9f9f9;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: contents;
+  justify-content: center; /* Центрирует контент по горизонтали */
+  align-items: center; /* Центрирует контент по вертикали */
   height: 100vh;
 }
 
 .container {
   background-color: #fff;
-  padding: 2rem;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
   width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  text-align: center;
+  box-sizing: border-box; /* Учитывает padding и border в общей ширине элемента */
 }
 
 h1 {
@@ -45,11 +48,9 @@ input {
 img {
   height: 100px;
   width: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin: 0 auto;
   margin-bottom: 15px;
+  display: block; /* Чтобы избежать проблем с выравниванием */
 }
 
 button {

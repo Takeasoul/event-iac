@@ -33,9 +33,9 @@ const submitForm = async () => {
 
 <template>
   <div class="container">
-    <h1>Вход администратора</h1>
+    <h1>Вход в аккаунт</h1>
     <form id="loginForm" @submit.prevent="submitForm">
-      <label for="name">ФИО</label>
+      <label for="login">Логин</label>
       <input type="text" id="login" name="login" v-model="formData.login" required>
 
       <label for="password">Пароль</label>
@@ -61,7 +61,7 @@ header {
 }
 
 h1 {
-  margin: 0;
+  margin: 20px;
   font-size: 1.5rem;
 }
 

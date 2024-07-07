@@ -2,6 +2,10 @@
 
 </script>
 
+<script setup>
+// Включите Vue функционал для фильтрации и изменения статуса
+</script>
+
 <template>
   <div class="container">
     <header>
@@ -9,10 +13,10 @@
       <a href="admin_sign_in.html" class="logout">Выход</a>
     </header>
     <div class="status-filters">
-      <button class="status-button" onclick="showAll()">Весь список</button>
-      <button class="status-button" onclick="filterStatus('Одобрено')">Одобрено</button>
-      <button class="status-button" onclick="filterStatus('Не одобрено')">Не одобрено</button>
-      <button class="status-button" onclick="filterStatus('На рассмотрении')">На рассмотрении</button>
+      <button class="status-button" @click="showAll">Весь список</button>
+      <button class="status-button" @click="filterStatus('Одобрено')">Одобрено</button>
+      <button class="status-button" @click="filterStatus('Не одобрено')">Не одобрено</button>
+      <button class="status-button" @click="filterStatus('На рассмотрении')">На рассмотрении</button>
     </div>
     <table id="data-table">
       <thead>
@@ -30,20 +34,7 @@
       </tr>
       </thead>
       <tbody>
-      <!-- Пример строки данных -->
-      <tr>
-        <td class="status">На рассмотрении</td>
-        <td>Иван</td>
-        <td>Иванович</td>
-        <td>Иванов</td>
-        <td>Компания</td>
-        <td>Должность</td>
-        <td>example@example.com</td>
-        <td>+79000000000</td>
-        <td><button class="approve-button" onclick="changeStatus(this, 'Одобрено')">Одобрить</button></td>
-        <td><button class="reject-button" onclick="changeStatus(this, 'Не одобрено')">Отклонить</button></td>
-      </tr>
-      <!-- Конец примера -->
+
       </tbody>
     </table>
   </div>
@@ -51,4 +42,51 @@
 
 <style scoped>
 
+
+
+
+
+.logout {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.status-filters {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+  color: #007bff;
+}
+
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.5rem;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.approve-button, .reject-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.approve-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.reject-button {
+  background-color: #dc3545;
+  color: #fff;
+}
 </style>

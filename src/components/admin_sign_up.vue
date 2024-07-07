@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {useRouter} from "vue-router";
+
 const formData = ref({
-  name: '',
+  login: '',
   password: ''
 });
 const router = useRouter();
@@ -15,18 +16,17 @@ const submitForm = async () => {
       },
       body: JSON.stringify(formData.value)
     });
+
     if (response.ok) {
-      const data = await response.json();
-      console.log('Response:', data);
-      // Перенаправляем на страницу администратора после успешного входа
-      router.push('/admin-panel'); // Путь к странице администратора
+      // Handle success, e.g., redirect to another page or show a success message
+      router.push('/approve');
+      console.log('User register successfully');
     } else {
-      console.error('Register failed:', response.statusText);
-      // Обработка ошибки входа
+      // Handle errors, e.g., show an error message
+      console.error('Failed to register user');
     }
   } catch (error) {
     console.error('Error:', error);
-    // Обработка ошибки, например, показать сообщение об ошибке
   }
 };
 </script>
@@ -34,15 +34,15 @@ const submitForm = async () => {
 <template>
   <div class="container">
     <h1>Регистрация администратора</h1>
-    <form id="registrationForm" method="POST" action="http://localhost:3000/register">
-      <label for="name">ФИО</label>
-      <input type="text" id="name" name="name" required>
+    <form id="registrationform" @submit.prevent="submitForm">
+      <label for="login">Логин</label>
+      <input type="text" id="login" name="login" v-model="formData.login" required>
 
       <label for="email">Почта</label>
       <input type="email" id="email" name="email" required>
 
       <label for="password">Пароль</label>
-      <input type="password" id="password" name="password" required>
+      <input type="password" id="password" name="password" v-model="formData.password" required>
 
       <button type="submit">Зарегистрироваться</button>
     </form>

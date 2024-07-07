@@ -10,11 +10,11 @@
       <label for="firstName">Имя</label>
       <input type="text" id="firstName" name="firstName" placeholder="Ваше полное имя" required>
 
-      <label for="middleName">Отчество</label>
-      <input type="text" id="middleName" name="middleName" placeholder="Ваше отчество (при наличии)">
+      <label for="middleName">Фамилия</label>
+      <input type="text" id="middleName" name="middleName" placeholder="Ваша фамилия">
 
-      <label for="lastName">Фамилия</label>
-      <input type="text" id="lastName" name="lastName" placeholder="Ваша фамилия" required>
+      <label for="lastName">Отчество</label>
+      <input type="text" id="lastName" name="lastName" placeholder="Ваше отчество (при наличии)" required>
 
       <label for="company">Компания</label>
       <input type="text" id="company" name="company" placeholder="Полное наименование компании" required>
