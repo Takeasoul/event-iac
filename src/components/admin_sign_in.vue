@@ -15,11 +15,20 @@ const submitForm = async () => {
       },
       body: JSON.stringify(formData.value)
     });
+
     if (response.ok) {
       const data = await response.json();
       console.log('Response:', data);
-      // Перенаправляем на страницу администратора после успешного входа
-      router.push('/admin-panel'); // Путь к странице администратора
+
+      // Предполагаем, что user_id находится в data
+      const userId = data.user_id;
+      if (userId) {
+        // Перенаправляем на страницу с user_id
+        router.push(`/${userId}/events`);
+      } else {
+        console.error('User ID не найден в ответе сервера');
+        // Обработка отсутствия user_id
+      }
     } else {
       console.error('Login failed:', response.statusText);
       // Обработка ошибки входа
