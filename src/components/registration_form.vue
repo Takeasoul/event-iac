@@ -65,6 +65,9 @@ const submitForm = async () => {
   try {
     const response = await axios.post(`/api/event/${eventId}/register`, formData.value);
     console.log('Registration successful:', response.data);
+    const userId = response.data.id; // Получаем ID созданного пользователя
+    const emailResponse = await axios.get(`/api/email/greetings/${userId}`);
+    console.log('Email send successful:', emailResponse.data);
     // Можно добавить обработку успешной регистрации, например, переход на другую страницу
     // router.push('/success-page');
   } catch (error) {
@@ -72,6 +75,7 @@ const submitForm = async () => {
     // Можно добавить обработку ошибки, например, показ сообщения об ошибке пользователю
   }
 };
+
 
 // Загрузка информации о мероприятии при создании компонента
 getEventInfo(route.params.id);

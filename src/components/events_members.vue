@@ -59,9 +59,28 @@ const selectAll = (event) => {
   }
 };
 
-// Функция для редактирования пользователя
-const approve = (userId) => {
-  alert(`Редактирование пользователя с ID: ${userId}`);
+const approve = async (userId) => {
+  const eventId = route.params.id;
+  const user = users.value.find(user => user.id === userId);
+  if (!user) {
+    console.error('User not found');
+    return;
+  }
+
+  try {
+    // Одобрение участника
+    const approveResponse = await axios.post(`/api/event/approve/${userId}`);
+    console.log('Approval successful:', approveResponse.data);
+
+    // Отправка email
+    const emailResponse = await axios.get(`/api/email/${userId}`);
+    console.log('Email sent:', emailResponse.data);
+
+    // Обновление состояния пользователя в списке
+    user.approved = true;
+  } catch (error) {
+    console.error('Error during form submission:', error);
+  }
 };
 
 // Функция для удаления пользователя
@@ -69,7 +88,6 @@ const deleteUser = (userId) => {
   if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
     users.value = users.value.filter(user => user.id !== userId);
   }
-
 };
 const goBack = () => {
   router.back();
