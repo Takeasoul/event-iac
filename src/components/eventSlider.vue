@@ -57,16 +57,25 @@ export default defineComponent({
     };
 
     const copyLinkToClipboard = async (eventId) => {
-      const registrationLink = createLink(eventId);
-      try {
-        await navigator.clipboard.writeText(registrationLink);
-        console.log('Ссылка скопирована в буфер обмена:', registrationLink);
-        // Здесь можно добавить уведомление пользователю об успешном копировании
-      } catch (error) {
-        console.error('Не удалось скопировать ссылку:', error);
-        // Здесь можно добавить обработку ошибки, например, показ сообщения об ошибке
-      }
-    };
+  const registrationLink = createLink(eventId);
+  try {
+    await navigator.clipboard.writeText(registrationLink);
+    console.log('Ссылка скопирована в буфер обмена:', registrationLink);
+    showNotification();
+  } catch (error) {
+    console.error('Не удалось скопировать ссылку:', error);
+    // Здесь можно добавить обработку ошибки, например, показ сообщения об ошибке
+  }
+};
+
+const showNotification = () => {
+  const notification = document.getElementById('notification');
+  notification.classList.add('show');
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+};
+
 
     const LogOut = () => {
       router.push({ path: `/login` });
@@ -92,9 +101,10 @@ export default defineComponent({
       <div class="logo">
         <img src="../assets/Logo.svg" alt="Logo">
       </div>
-        <button class="create-event blue-button" @click="createEvent()">Создать новое мероприятие</button>
-        <button class="logout-button" @click="LogOut()">Выйти</button>
+      <button class="create-event blue-button" @click="createEvent()">Создать новое мероприятие</button>
+      <button class="logout-button" @click="LogOut()">Выйти</button>
     </div>
+    <div id="notification" class="notification">Ссылка скопирована в буфер обмена</div>
     <div class="content">
       <div class="title">Мои мероприятия</div>
       <div class="carousel-wrapper">
@@ -146,6 +156,32 @@ export default defineComponent({
 </template>
 
 <style scoped>
+.notification {
+  visibility: hidden;
+  width: 300px; /* Увеличение ширины */
+  background-color: rgb(63, 85, 101);
+  color: #fff;
+  font-family: "Inter-light";
+  font-size: 24px;
+  font-weight: 400;
+  text-align: center;
+  border-radius: 8px;
+  padding: 20px; /* Увеличение padding */
+  position: fixed;
+  z-index: 1000; /* Перекрытие всех остальных элементов */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); /* Центрирование по горизонтали и вертикали */
+  font-size: 20px; /* Увеличение размера текста */
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s linear;
+}
+
+.notification.show {
+  visibility: visible;
+  opacity: 1;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -155,6 +191,7 @@ export default defineComponent({
 }
 
 .header {
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
@@ -171,11 +208,18 @@ export default defineComponent({
   fill: #000000; /* Set the fill color of the logo */
 }
 
-.title {
+.create-event {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  background-color: #0000ff; /* Assuming blue button background color */
+  color: #fff;
+  cursor: pointer;
   font-family: "Inter-Regular";
-  font-size: 2.5rem;
   font-weight: 400;
-  color: #000000;
 }
 
 .logout-button {
@@ -187,8 +231,17 @@ export default defineComponent({
   color: #fff;
   cursor: pointer;
   font-family: "Inter-Regular";
-  font-weight:400;
+  font-weight: 400;
 }
+
+.title {
+  font-family: "Inter-Regular";
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #000000;
+}
+
+
 
 .content {
   display: flex;
@@ -211,8 +264,9 @@ export default defineComponent({
   height: 500px; /* Increase the height */
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45), 
                 0 6px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.5);
   padding-top: 30px;
   display: flex; /* Add this to make the card a flex container */
   flex-direction: column; /* Stack the elements vertically */
@@ -236,7 +290,7 @@ export default defineComponent({
   flex: 1; /* Take up the remaining space */
   text-align: left;
   padding-top: 20px;
-  padding-left: 5px;
+  padding-left: 25px;
   padding-bottom: 10px;
   font-size: 20px;
 }
@@ -295,7 +349,7 @@ export default defineComponent({
   font-family: "Inter-light";
   font-size: 24px;
   font-weight: 400;
-  color: rgb(63, 85, 101);;
+  color: rgb(63, 85, 101);
 }
 
 .create-event{
