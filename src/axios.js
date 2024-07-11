@@ -1,12 +1,25 @@
-// src/axios.js
 import axios from 'axios';
+
+const publicRoutes = [
+    '/:id/registration-form'
+];
+
+// Функция для проверки, является ли маршрут публичным
+const isPublicRoute = (url) => {
+    return publicRoutes.some(route => {
+        const regex = new RegExp(route.replace(/:[^/]+/g, '[^/]+'));
+        return regex.test(url);
+    });
+};
 
 // Интерсептор для включения токенов в запросы
 axios.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('accessToken');
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+        if (!isPublicRoute(config.url)) {
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
         }
         return config;
     },
@@ -19,8 +32,11 @@ axios.interceptors.request.use(
 const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
-        // Перенаправление на страницу входа или обработка ошибки
-        window.location.href = '/login';
+        // Если это не публичный маршрут, перенаправляем на страницу входа
+        const currentUrl = window.location.pathname;
+        if (!isPublicRoute(currentUrl)) {
+            window.location.href = '/login';
+        }
         return;
     }
     try {
@@ -29,8 +45,11 @@ const refreshAccessToken = async () => {
         localStorage.setItem('accessToken', accessToken);
     } catch (error) {
         console.error('Error refreshing access token:', error);
-        // Перенаправление на страницу входа или обработка ошибки
-        window.location.href = '/login';
+        // Если это не публичный маршрут, перенаправляем на страницу входа
+        const currentUrl = window.location.pathname;
+        if (!isPublicRoute(currentUrl)) {
+            window.location.href = '/login';
+        }
     }
 };
 
@@ -41,6 +60,7 @@ axios.interceptors.response.use(
     },
     async (error) => {
         const originalRequest = error.config;
+
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             await refreshAccessToken();
@@ -48,6 +68,7 @@ axios.interceptors.response.use(
             axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
             return axios(originalRequest);
         }
+
         return Promise.reject(error);
     }
 );
