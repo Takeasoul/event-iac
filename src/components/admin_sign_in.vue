@@ -1,43 +1,40 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 const formData = ref({
-  name: '',
+  login: '',
   password: ''
 });
 const router = useRouter();
+
 const submitForm = async () => {
+  const loginData = {
+    login: formData.value.login,
+    password: formData.value.password
+  };
   try {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData.value)
-    });
+    const response = await axios.post('http://localhost:8080/api/auth/login', loginData);
+    const { accessToken, refreshToken, user_id } = response.data;
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Response:', data);
+    // Сохранение токенов в localStorage
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    console.log('Login successful:', response.data);
 
-      // Предполагаем, что user_id находится в data
-      const userId = data.user_id;
-      if (userId) {
-        // Перенаправляем на страницу с user_id
-        router.push(`/${userId}/events`);
-      } else {
-        console.error('User ID не найден в ответе сервера');
-        // Обработка отсутствия user_id
-      }
+    // Перенаправление на страницу с userId, если токен успешно получен
+    if (user_id) {
+      router.push(`/${user_id}/events`);
     } else {
-      console.error('Login failed:', response.statusText);
-      // Обработка ошибки входа
+      console.error('User ID не найден в ответе сервера');
+      // Обработка отсутствия userId
     }
   } catch (error) {
     console.error('Error:', error);
     // Обработка ошибки, например, показать сообщение об ошибке
   }
 };
+
 const navigateToSignUp = async() => {
     this.$route.push({ path: '/sign-up' });
 };

@@ -5,7 +5,7 @@ import { GSCarousel, GSLayoutNumeric as RawGSLayoutNumeric } from 'gitart-scroll
 import 'gitart-scroll-carousel/dist/index.css';
 import 'gitart-scroll-carousel/dist/GSArrow.css';
 import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css';
-import axios from 'axios';
+import axios from '../axios';
 
 export default defineComponent({
   components: {
@@ -22,7 +22,11 @@ export default defineComponent({
     onMounted(async () => {
       console.log('About to send fetch request...');
       try {
-        const response = await axios.get(`/api/event/eventsAll/${orgId}`);
+        const response = await axios.get('/api/event/eventsAllByOrgId', {
+          params: {
+            orgId: orgId// Передаем orgId как параметр запроса
+          }
+        });
         console.log('Received data:', response.data);
         events.value = response.data;
       } catch (error) {
