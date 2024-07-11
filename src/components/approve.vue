@@ -10,7 +10,7 @@ import galochkaImage from '@/assets/galochka.png';
   <div class="container">
     <h1>Данные успешно отправлены!</h1>
     <p>Скоро на указанную Вами почту будет отправлен QR-код, который вам нужно будет предъявить для верификации на мероприятии.</p>
-    <img src="../assets/check-circle.svg" alt="" class = "cirlce">
+    <img src="../assets/galochka.png" alt="" class = "cirlce">
     <h1>Ждем Вас на мероприятии!</h1>
   </div>
 </template>
