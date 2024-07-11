@@ -5,7 +5,9 @@
     </header>
     <div class="container">
       <div class="form-background">
-        <h1>Регистрация на: {{ eventName }}</h1>
+        <h1>Регистрация на {{ eventName }}</h1>
+
+        <p class="bottom-text">Проверьте корректность введённых данных, так как по ним будет проходить верификация на мероприятии.</p>
 
         <form @submit.prevent="submitForm">
           <div class="form-group">
@@ -32,7 +34,7 @@
           <button type="submit">Отправить</button>
         </form>
 
-        <p class="bottom-text">Проверьте корректность введённых данных, так как по ним будет проходить верификация на мероприятии.</p>
+
         <p class="bottom-text">Нажимая кнопку «Отправить», Вы соглашаетесь с Политикой конфиденциальности и условиями обслуживания.</p>
       </div>
     </div>
@@ -134,7 +136,7 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 1%;
+  margin-top: 6%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -147,6 +149,16 @@ h1 {
   letter-spacing: 0%;
   text-align: left;
   padding-bottom: 5px;
+}
+
+.bottom-text {
+  display: flex;
+  font-family: "Inter-regular";
+  align-items: center;
+  color: black;
+  font-size: 18px;
+  text-align: -webkit-center;
+  margin: 0;
 }
 
 form {
@@ -217,8 +229,8 @@ input:focus {
   align-items: center;
   color: black;
   font-size: 18px;
-  text-align: center;
-  margin: 0;
+  text-align: -webkit-center;
+  margin: 10px;
 }
 
 @font-face {
