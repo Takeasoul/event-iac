@@ -39,7 +39,7 @@ const submitForm = async () => {
   }
 };
 const navigateToSignUp = async() => {
-    this.$route.push({ path: '/sign-up' });
+    router.push('/sign-up');
 };
 </script>
 
@@ -49,7 +49,7 @@ const navigateToSignUp = async() => {
   </header>
   <div class="container">
       <div class = "form-background">
-        <h1>Рады видеть вас снова</h1>
+        <h1>Рады видеть вас снова!</h1>
         <form id="loginForm" @submit.prevent="submitForm">
 
           <input type="text" id="login" name="login" v-model="formData.login" required placeholder="Логин">
@@ -58,7 +58,7 @@ const navigateToSignUp = async() => {
 
           <button type="submit">Войти</button>
         </form>
-        <p class = "registration">Еще не зарегистрированы? <a href="#" @click.prevent="navigateToSignUp">Регистрация </a></p>
+        <p class = "registration">Еще не зарегистрированы? <a href="#" @click.prevent="navigateToSignUp()">Регистрация </a></p>
       </div>
   </div>
 </template>
@@ -97,7 +97,8 @@ header {
   height: 400px;
   padding: 30px;
   border-radius: 5px;
-  box-shadow: 4px 4px 4px 0px rgb(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 6px 20px rgba(0, 0, 0, 0.1);
   background: rgb(255, 255, 255);
   display: flex;
   flex-direction: column;
@@ -171,7 +172,7 @@ input:focus{
   font-family: "Inter-light";
   font-size: 20px;
   font-weight: 400px;
-  color: rgb(63, 85, 101);;
+  color: rgb(63, 85, 101);
 }
 @font-face {
   font-family: "Inter-regular";

@@ -29,6 +29,10 @@ const submitForm = async () => {
     console.error('Error:', error);
   }
 };
+
+const navigateToSignIn = async() => {
+    router.push('/login');
+};
 </script>
 
 <template>
@@ -47,7 +51,7 @@ const submitForm = async () => {
 
         <button type="submit">Зарегистрироваться</button>
       </form>
-      <p class="authorize">Уже зарегистрированы? <a href="admin_sign_in.vue">Войти</a></p>
+      <p class="authorize">Уже зарегистрированы? <a href="#" @click.prevent="navigateToSignIn()">Войти</a></p>
     </div>
   </div>
 </template>
@@ -85,7 +89,8 @@ header {
   height: 450px;
   padding: 30px;
   border-radius: 5px;
-  box-shadow: 4px 4px 4px 0px rgb(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 6px 20px rgba(0, 0, 0, 0.1);
   background: rgb(255, 255, 255);
   display: flex;
   flex-direction: column;
@@ -159,7 +164,7 @@ input:focus{
   font-family: "Inter-light";
   font-size: 20px;
   font-weight: 400px;
-  color: rgb(63, 85, 101);;
+  color: rgb(63, 85, 101);
 }
 @font-face {
   font-family: "Inter-regular";
