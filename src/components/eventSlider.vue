@@ -163,7 +163,7 @@ export default defineComponent({
 }
 
 .logo {
-  margin-right: 20px;
+  margin-right: 40px;
   color: #000000;
 }
 
