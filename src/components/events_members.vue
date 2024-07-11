@@ -3,11 +3,13 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 
+
 // Получаем ID события из роутера
 const route = useRoute();
 const eventId = route.params.id;
 const router = useRouter();
 const users = ref([]);
+const event = ref([])
 
 const filterState = ref('');
 const searchQuery = ref('');
@@ -25,6 +27,7 @@ const fetchMembers = async () => {
 };
 
 onMounted(fetchMembers);
+
 
 // Фильтруем пользователей по поисковому запросу и состоянию
 const filteredUsers = computed(() => {
@@ -45,6 +48,17 @@ const filteredUsers = computed(() => {
   });
 });
 
+const fetchEvent = async () => {
+  try {
+    const response = await axios.get(`/api/event/${eventId}/info`);
+    event.value = response.data || [];  // Добавляем проверку на отсутствие данных
+    console.debug(event.value);
+    console.log(event.value);  // Выводим данные в консоль для проверки
+  } catch (error) {
+    console.error('Ошибка при получении данных участников:', error);
+  }
+};
+onMounted(fetchEvent);
 // Функция для фильтрации по состоянию
 const filterByState = (state) => {
   filterState.value = filterState.value === state ? '' : state;
@@ -58,6 +72,39 @@ const selectAll = (event) => {
     selectedUsers.value = [];
   }
 };
+
+
+function downloadBadges(){
+  try {
+    axios({
+      url: 'api/document/pdf/badges', // Download File URL Goes Here
+      method: 'GET',
+      responseType: 'blob',
+      params: {
+        eventId: eventId,
+      },
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': ' GET, PUT, POST, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+        'Access-Control-Allow-Credentials': 'false',
+      },
+
+    }).then((response) => {
+      var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+      var fileLink = document.createElement('a');
+
+      fileLink.href = fileURL;
+      fileLink.setAttribute('download', 'badges.pdf');
+      document.body.appendChild(fileLink);
+
+      fileLink.click();
+    });
+    console.log('Loading successful');
+  }catch (error) {
+    console.error('Error during loading pdf:', error);
+  }
+}
 
 const approve = async (userId) => {
   const eventId = route.params.id;
@@ -83,6 +130,7 @@ const approve = async (userId) => {
   }
 };
 
+
 // Функция для удаления пользователя
 const deleteUser = (userId) => {
   if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
@@ -101,7 +149,7 @@ const goBack = () => {
     <img src="../assets/Logo.svg" alt="">
   </header>
   <div class="user-table">
-    <h2>Участники "EVENT NAME"</h2>
+    <h2>Участники "{{ event.event_name }}"</h2>
     <div class="search-bar">
       <input type="text" v-model="searchQuery" placeholder=" Поиск"  class = "input-with-icon"/>
     </div>
@@ -125,7 +173,7 @@ const goBack = () => {
         Отклонено
       </button>
     </div>
-    <button @click="DouwnloadBages()" class = "downloadButtons">
+    <button @click="downloadBadges()" class = "downloadButtons" >
         Скачать бэйджи
       </button>
     <div class="table-wrapper">
@@ -154,7 +202,7 @@ const goBack = () => {
           <td>{{ user.email }}</td>
           <td>{{ user.firstname }} {{ user.middlename }} {{ user.lastname }}</td>
           <td>{{ user.phone }}</td>
-          <td><button @click="approve(user.id)">✔️</button></td>
+          <td><button @click="approve(user.id)">✅</button></td>
           <td><button @click="deleteUser(user.id)">❌</button></td>
         </tr>
         </tbody>
