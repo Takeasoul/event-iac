@@ -19,7 +19,7 @@ const submitForm = async () => {
 
     if (response.ok) {
       // Handle success, e.g., redirect to another page or show a success message
-      router.push('/approve');
+      router.push('/approve-registration');
       console.log('User register successfully');
     } else {
       // Handle errors, e.g., show an error message

@@ -9,6 +9,7 @@ import approve from './components/approve.vue'
 import events_members from './components/events_members.vue'
 import eventSlider from "@/components/eventSlider.vue";
 import eventMemberInfo from './components/event_member_info.vue'
+import approve_registration from './components/approve_registration.vue'
 
 const routes = [
     { path: '/login', component: admin_sign_in },
@@ -17,6 +18,7 @@ const routes = [
     { path: '/:id/registration-form', component: registration_form },
     { path: '/event/:id/members', component: events_members },
     { path: '/approve', component: approve },
+    { path: '/approve-registration', component: approve_registration },
     { path: '/:orgid/events', component: eventSlider },
     {path: '/event-member-info/:id', component: eventMemberInfo},
 ]

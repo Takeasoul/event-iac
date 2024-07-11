@@ -1,18 +1,19 @@
-<script setup>
-import galochkaImage from '@/assets/galochka.png';
-</script>
-
 <template>
   <header>
     <img src="@/assets/Logo.svg" alt="Logo" class="logo">
   </header>
   <div class="container">
     <h1>Данные успешно отправлены!</h1>
-    <p>Скоро на указанную Вами почту будет отправлен QR-код, который вам нужно будет предъявить для верификации на мероприятии.</p>
+    <p>В случае подтверждения Ваших данных Вам будет выслано письмо на указанную при регистрации почту.</p>
+    <p>Среднее время ожидания одобрения заявки 5 рабочих дней</p>
     <img src="@/assets/galochka.png" alt="Галочка" class="circle">
-    <h1>Ждем Вас на мероприятии!</h1>
+    <h1>Спасибо за выбор нашего сервиса!</h1>
   </div>
 </template>
+
+<script setup>
+import galochkaImage from '@/assets/galochka.png';
+</script>
 
 <style scoped>
 .container {

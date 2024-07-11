@@ -10,4 +10,7 @@ import 'gitart-scroll-carousel/dist/GSArrow.css'
 // styles of the layout you want to use.
 // read more in the layouts section.
 import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css'
-createApp(App).use(router).mount('#app')
+
+import VueTheMask from 'vue-the-mask';
+
+createApp(App).use(router).use(VueTheMask).mount('#app')

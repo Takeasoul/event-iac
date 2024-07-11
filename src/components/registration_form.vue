@@ -8,13 +8,27 @@
         <h1>Регистрация на: {{ eventName }}</h1>
 
         <form @submit.prevent="submitForm">
-          <input v-model="formData.middlename" type="text" id="middleName" name="middleName" placeholder="Фамилия" required>
-          <input v-model="formData.firstname" type="text" id="firstname" name="firstname" placeholder="Имя" required>
-          <input v-model="formData.lastname" type="text" id="lastName" name="lastName" placeholder="Отчество (при наличии)">
-          <input v-model="formData.company" type="text" id="company" name="company" placeholder="Полное наименование компании" required>
-          <input v-model="formData.position" type="text" id="position" name="position" placeholder="Должность" required>
-          <input v-model="formData.email" type="email" id="email" name="email" placeholder="Корпоративный адрес" required>
-          <input v-model="formData.phone" type="tel" id="phone" name="phone" placeholder="Номер телефона" required>
+          <div class="form-group">
+            <input v-model="formData.middlename" type="text" id="middleName" name="middleName" placeholder="Фамилия *" required>
+          </div>
+          <div class="form-group">
+            <input v-model="formData.firstname" type="text" id="firstname" name="firstname" placeholder="Имя *" required>
+          </div>
+          <div class="form-group">
+            <input v-model="formData.lastname" type="text" id="lastName" name="lastName" placeholder="Отчество (при наличии)">
+          </div>
+          <div class="form-group">
+            <input v-model="formData.company" type="text" id="company" name="company" placeholder="Полное наименование компании *" required>
+          </div>
+          <div class="form-group">
+            <input v-model="formData.position" type="text" id="position" name="position" placeholder="Должность *" required>
+          </div>
+          <div class="form-group">
+            <input v-model="formData.email" type="email" id="email" name="email" placeholder="Корпоративный адрес *" required>
+          </div>
+          <div class="form-group">
+            <input v-model="formData.phone" v-mask="'+7 (###) ###-##-##'" type="tel" id="phone" name="phone" placeholder="Номер телефона *" required>
+          </div>
           <button type="submit">Отправить</button>
         </form>
 
@@ -29,9 +43,10 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-
+import VueInputMask from 'vue-input-mask';
 const route = useRoute();
 const router = useRouter();
+import {TheMask} from 'vue-the-mask'
 
 const formData = ref({
   middlename: '',
@@ -69,7 +84,7 @@ const submitForm = async () => {
     const emailResponse = await axios.get(`/api/email/greetings/${userId}`);
     console.log('Email send successful:', emailResponse.data);
     // Можно добавить обработку успешной регистрации, например, переход на другую страницу
-    // router.push('/success-page');
+    router.push('/approve');
   } catch (error) {
     console.error('Error submitting registration form:', error);
     // Можно добавить обработку ошибки, например, показ сообщения об ошибке пользователю
@@ -81,11 +96,6 @@ const submitForm = async () => {
 getEventInfo(route.params.id);
 
 </script>
-
-<style scoped>
-/* Ваши стили остаются без изменений */
-</style>
-
 
 <style scoped>
 body {
@@ -146,6 +156,11 @@ form {
   width: 100%;
 }
 
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
 input {
   width: 380px;
   height: 35px;
@@ -155,6 +170,7 @@ input {
   border: 1px solid rgb(63, 85, 101);
   font-family: "Inter-regular";
   font-size: 20px;
+  position: relative;
 }
 
 button {
@@ -194,6 +210,7 @@ input:focus {
   color: rgb(63, 85, 101);
 }
 
+
 .bottom-text {
   display: flex;
   font-family: "Inter-regular";
@@ -203,6 +220,7 @@ input:focus {
   text-align: center;
   margin: 0;
 }
+
 @font-face {
   font-family: "Inter-regular";
   src: url(/src/fonts/Inter-Regular.ttf);
