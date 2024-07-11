@@ -92,7 +92,8 @@ export default defineComponent({
       <div class="logo">
         <img src="../assets/Logo.svg" alt="Logo">
       </div>
-      <button class="logout-button" @click="LogOut()">"Выйти из аккаунта"</button>
+        <button class="create-event blue-button" @click="createEvent()">Создать новое мероприятие</button>
+        <button class="logout-button" @click="LogOut()">Выйти</button>
     </div>
     <div class="content">
       <div class="title">Мои мероприятия</div>
@@ -131,15 +132,15 @@ export default defineComponent({
                 </div>
               </div>
               <div class="event-actions">
-                <button class="event-button" @click="goToMembers(data.event_id)">Участники</button>
-                <button class="event-button"@click="copyLinkToClipboard(data.event_id)">Создать приглашение</button>
-                <button class="event-button">Изменить</button>
+                <button class="event-button blue-button" @click="goToMembers(data.event_id)">Участники</button>
+                <button class="event-button blue-button"@click="copyLinkToClipboard(data.event_id)">Создать приглашение</button>
+                <button class="event-button blue-button">Изменить</button>
               </div>
             </div>
           </template>
         </GSCarousel>
       </div>
-      <div class="active-events">Всего мероприятий активно: {{ events.length }}</div>
+      <div class="active-events">Активных мероприятий: {{ events.length }}</div>
     </div>
   </div>
 </template>
@@ -150,7 +151,7 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #f2f2f2;
+  background-color: white;
 }
 
 .header {
@@ -158,35 +159,35 @@ export default defineComponent({
   align-items: center;
   width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
   background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
   margin-right: 20px;
-  color: #333;
+  color: #000000;
 }
 
 .logo svg {
-  fill: #333; /* Set the fill color of the logo */
+  fill: #000000; /* Set the fill color of the logo */
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+  font-family: "Inter-Regular";
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #000000;
 }
 
 .logout-button {
   margin-left: auto;
-  padding: 8px 16px;
+  padding: 10px 25px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #930404;
   color: #fff;
   cursor: pointer;
+  font-family: "Inter-Regular";
+  font-weight:400;
 }
 
 .content {
@@ -196,8 +197,7 @@ export default defineComponent({
   width: 100%;
   padding: 20px;
   background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px; 
 }
 
 .carousel-wrapper {
@@ -211,23 +211,32 @@ export default defineComponent({
   height: 500px; /* Increase the height */
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+                0 6px 20px rgba(0, 0, 0, 0.1);
   padding-top: 30px;
   display: flex; /* Add this to make the card a flex container */
   flex-direction: column; /* Stack the elements vertically */
+  font-family: "Inter-Regular";
+  font-size:28px;
+  font-weight: 400;
 }
 
 .event-name {
+  font-family: "Inter-Regular";
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .event-details {
+  font-family: "Intrer-light";
+  font-weight: 400;
   flex: 1; /* Take up the remaining space */
   text-align: left;
   padding-top: 20px;
+  padding-left: 5px;
   padding-bottom: 10px;
   font-size: 20px;
 }
@@ -239,52 +248,84 @@ export default defineComponent({
 }
 
 .event-detail label {
-  font-weight: bold;
+  font-weight: 400;
   margin-right: 20px;
-  color: #333;
+  color: #000000;
 }
 
 .event-detail span {
-  color: #333;
+  color: #000000;
 
 }
 
 .event-description label {
-  font-weight: bold;
+  font-weight: 400;
   margin-bottom: 5px;
-  color: #333;
+  color: #000000;
   margin-right: 10px;
 }
 
 .event-description span {
-  color: #333;
+  color: #000000;
 }
 
 .event-actions {
-  display: flex; /* Make the actions a flex container */
-  justify-content: space-evenly; /* Space the buttons evenly */
+  display: grid; /* Make the actions a flex container */
+  justify-content:center; /* Space the buttons evenly */
   margin-top: -20px; /* Move the buttons up to overlap with the description */
   padding-bottom: 20px; /* Add some padding to separate from the card bottom */
+  padding-bottom: 1%;
 }
 
 .event-button {
-  padding: 8px 16px;
+  padding: 10px 16px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: rgb(63, 85, 101);
   color: #fff;
   cursor: pointer;
   font-weight: bold;
-  font-size: 14px;
+  margin-bottom: 10px;
+  font-family: "Inter-light";
+  font-size:18px;
+  font-weight: 400;
 }
 
 .active-events {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  margin-top: 20px;
+  font-family: "Inter-light";
+  font-size: 24px;
+  font-weight: 400;
+  color: rgb(63, 85, 101);;
 }
 
+.create-event{
+  padding: 10px;
+  font-family: "Inter-light";
+  font-size: 16px;
+  font-weight: 400;
+  border:none;
+  border-radius: 5px;
+  color:white;
+  background-color: rgb(63, 85, 101);;
+}
+.blue-button:hover{
+  background-color:  rgb(134, 166, 189);
+  transition: all 0.5s ease;
+}
+.logout-button:hover{
+  background-color:  #ab4a4a;
+  transition: all 0.5s ease;
+}
+
+
+@font-face {
+  font-family: "Inter-regular";
+  src: url(/src/fonts/Inter-Regular.ttf);
+}
+@font-face {
+  font-family: "Inter-light";
+  src: url(/src/fonts/Inter-Light.ttf);
+}
 @media screen and (max-width: 768px) {
   .carousel-wrapper {
     max-width: 100%;

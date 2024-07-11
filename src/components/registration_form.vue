@@ -124,7 +124,7 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 3%;
+  margin-top: 1%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -148,7 +148,7 @@ form {
 
 input {
   width: 380px;
-  height: 45px;
+  height: 35px;
   padding: 10px;
   margin: 10px 0;
   border-radius: 5px;
@@ -203,7 +203,6 @@ input:focus {
   text-align: center;
   margin: 0;
 }
-
 @font-face {
   font-family: "Inter-regular";
   src: url(/src/fonts/Inter-Regular.ttf);

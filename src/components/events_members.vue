@@ -103,7 +103,7 @@ const goBack = () => {
   <div class="user-table">
     <h2>Участники "EVENT NAME"</h2>
     <div class="search-bar">
-      <input type="text" v-model="searchQuery" placeholder="🔍 Поиск" />
+      <input type="text" v-model="searchQuery" placeholder=" Поиск"  class = "input-with-icon"/>
     </div>
     <div class="filter-buttons">
       <button
@@ -125,6 +125,9 @@ const goBack = () => {
         Отклонено
       </button>
     </div>
+    <button @click="DouwnloadBages()" class = "downloadButtons">
+        Скачать бэйджи
+      </button>
     <div class="table-wrapper">
       <table>
         <thead>
