@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import axios from "axios";
 
 //переменные для хранения данных
 const memberData = ref({
@@ -30,8 +31,8 @@ console.log(memberId);
 //получение данных с сервера
 const fetchMemeberInfo = async () => {
   try{
-    const response = await fetch(`http://localhost:8080/api/event/memberInfo/${memberId}`)
-    if(!response.ok){
+    const response = axios.get(`http://localhost:8080/api/event/memberInfo/${memberId}`)
+    if(!response === 200){
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
@@ -55,8 +56,8 @@ const fetchMemeberInfo = async () => {
 
 const fetchEventInfo = async (eventId) => {
   try{
-    const response = await fetch(`http://localhost:8080/api/event/${eventId}/info`)
-    if(!response.ok){
+    const response = axios.get(`http://localhost:8080/api/event/${eventId}/info`)
+    if(!response === 200){
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
