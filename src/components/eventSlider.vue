@@ -84,9 +84,13 @@ const showNotification = () => {
   }, 3000);
 };
 
-const LogOut = () => {
-  router.push({ path: `/login` });
-};
+    const LogOut = () => {
+      // Удаляем токены из localStorage
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // Перенаправляем пользователя на страницу логина
+      router.push({ path: `/login` });
+    };
 
 
     return {

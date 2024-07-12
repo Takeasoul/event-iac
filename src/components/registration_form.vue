@@ -11,13 +11,13 @@
 
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <input v-model="formData.middlename" type="text" id="middleName" name="middleName" placeholder="Фамилия *" required>
+            <input v-model="formData.lastname" type="text" id="lastname" name="lastname" placeholder="Фамилия *" required>
           </div>
           <div class="form-group">
             <input v-model="formData.firstname" type="text" id="firstname" name="firstname" placeholder="Имя *" required>
           </div>
           <div class="form-group">
-            <input v-model="formData.lastname" type="text" id="lastName" name="lastName" placeholder="Отчество (при наличии)">
+            <input v-model="formData.middlename" type="text" id="middleName" name="middleName" placeholder="Отчество (при наличии)">
           </div>
           <div class="form-group">
             <input v-model="formData.company" type="text" id="company" name="company" placeholder="Полное наименование компании *" required>
