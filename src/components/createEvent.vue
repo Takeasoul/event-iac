@@ -37,6 +37,7 @@
 
 <script>
 import { useRoute, useRouter } from 'vue-router';
+import axios from "axios";
 
 export default {
   setup() {
@@ -68,14 +69,12 @@ export default {
       this.form.ogr_id = this.orgId;
 
       try {
-        const response = await fetch('http://localhost:8080/api/event/createEvent', {
-          method: 'POST',
+        const response = await axios.post(`http://localhost:8080/api/event/createEvent`, this.form, {
           headers: {
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(this.form)
+          }
         });
-        if (response.ok) {
+        if (response.status === 200) {
           this.notification = 'Событие успешно создано!';
           setTimeout(() => {
             this.notification = '';

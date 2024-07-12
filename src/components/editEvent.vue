@@ -38,6 +38,7 @@
   <script>
   import { useRoute, useRouter } from 'vue-router';
   import { ref, onMounted } from 'vue';
+  import axios from "axios";
   
   export default {
     setup() {
@@ -59,9 +60,9 @@
       onMounted(async () => {
         try {
           console.log(`Fetching event data for id: ${evId}`);
-          const response = await fetch(`http://localhost:8080/api/event/${evId}/info`);
-          if (response.ok) {
-            const data = await response.json();
+          const response = await axios.get(`http://localhost:8080/api/event/${evId}/info`);
+          if (response.status === 200) {
+            const data = response.data; // Данные находятся в response.data
             console.log('Fetched event data:', data);
             form.value = data;
           } else {
@@ -73,18 +74,16 @@
           notification.value = 'Ошибка при загрузке данных события.';
         }
       });
-  
+
       const submitForm = async () => {
         try {
           console.log('Submitting edited event data:', form.value);
-          const response = await fetch(`http://localhost:8080/api/event/editEvent/${evId}`, {
-            method: 'Post',
+          const response = await axios.post(`http://localhost:8080/api/event/editEvent/${evId}`, form.value, {
             headers: {
               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(form.value)
+            }
           });
-          if (response.ok) {
+          if (response.status === 200) {
             notification.value = 'Событие успешно обновлено!';
             setTimeout(() => {
               notification.value = '';
@@ -99,7 +98,8 @@
           notification.value = 'Ошибка при обновлении события.';
         }
       };
-  
+
+
       return {
         form,
         notification,
