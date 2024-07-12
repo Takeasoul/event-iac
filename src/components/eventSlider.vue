@@ -78,6 +78,10 @@ const showNotification = () => {
 
 
     const LogOut = () => {
+      // Удаляем токены из localStorage
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // Перенаправляем пользователя на страницу логина
       router.push({ path: `/login` });
     };
 

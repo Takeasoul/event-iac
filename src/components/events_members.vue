@@ -2,7 +2,8 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
-
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 // Получаем ID события из роутера
 const route = useRoute();
@@ -120,11 +121,35 @@ const approve = async (userId) => {
     console.log('Approval successful:', approveResponse.data);
 
     // Отправка email
-    const emailResponse = await axios.get(`/api/email/${userId}`);
-    console.log('Email sent:', emailResponse.data);
+    // const emailResponse = await axios.get(`/api/email/${userId}`);
+    // console.log('Email sent:', emailResponse.data);
 
     // Обновление состояния пользователя в списке
     user.approved = true;
+  } catch (error) {
+    console.error('Error during form submission:', error);
+  }
+};
+
+const unapprove = async (userId) => {
+  const eventId = route.params.id;
+  const user = users.value.find(user => user.id === userId);
+  if (!user) {
+    console.error('User not found');
+    return;
+  }
+
+  try {
+    // Одобрение участника
+    const approveResponse = await axios.post(`/api/event/unapprove/${userId}`);
+    console.log('Approval successful:', approveResponse.data);
+
+    // // Отправка email
+    // const emailResponse = await axios.get(`/api/email/${userId}`);
+    // console.log('Email sent:', emailResponse.data);
+
+    // Обновление состояния пользователя в списке
+    user.approved = false;
   } catch (error) {
     console.error('Error during form submission:', error);
   }
@@ -173,9 +198,12 @@ const goBack = () => {
         Отклонено
       </button>
     </div>
+    <div class="download-button">
     <button @click="downloadBadges()" class = "downloadButtons" >
         Скачать бэйджи
+      <font-awesome-icon :icon="faDownload" class="pdf-icon"/>
       </button>
+    </div>
     <div class="table-wrapper">
       <table>
         <thead>
@@ -203,7 +231,7 @@ const goBack = () => {
           <td>{{ user.firstname }} {{ user.middlename }} {{ user.lastname }}</td>
           <td>{{ user.phone }}</td>
           <td><button @click="approve(user.id)">✅</button></td>
-          <td><button @click="deleteUser(user.id)">❌</button></td>
+          <td><button @click="unapprove(user.id)">❌</button></td>
         </tr>
         </tbody>
       </table>
@@ -319,11 +347,63 @@ h2::after {
 }
 
 
+.search-bar {
+  margin-top: 1px;
+  margin-bottom: 1rem;
+  width: 400px;
+  height: 40px;
+  position: absolute;
+  top: 229px;
+  left: 375px;
+
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  font-family: "Inter-regular";
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 30px;
+}
+
+.download-button {
+  margin-top: 80px;
+  margin-bottom: 1rem;
+  width: 400px;
+  height: 40px;
+  position: absolute;
+  top: 150px;
+  left: 1440px;
+}
+
+.download-button button {
+  margin-right: 10px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  font-family: "Inter-regular";
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.download-button button:hover {
+  background-color: #ddd;
+}
+
+
+
 .table-wrapper {
   margin-top: 130px;
   overflow-y: auto;
   max-height: 550px; /* Adjust this value based on your needs */
-  width: 1300px;
+  width: 1900px;
   position: absolute;
   top: 180px;
   left: 349px;
@@ -339,7 +419,7 @@ td {
   text-align: center;
   background-color: #f0f0f0;
   font-family: "Inter-light";
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   line-height: 26px;
 }
@@ -349,7 +429,7 @@ th {
   text-align: center;
   background-color: #f0f0f0;
   font-family: "Inter-regular";
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   line-height: 26px;
 }
