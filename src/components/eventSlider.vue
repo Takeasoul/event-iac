@@ -51,9 +51,17 @@ export default defineComponent({
       router.push({ path: `/event/${eventId}/members` });
     };
 
+    const editEvent = (eventId) => {
+      router.push({path: `/editEvent/${eventId}/${orgId}` });
+    }
+
     const createLink = (eventId) => {
       const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
       return registrationLink;
+    };
+
+    const createEventClick = async () => {
+      router.push({ path: `/createEvent/${orgId}` });
     };
 
     const copyLinkToClipboard = async (eventId) => {
@@ -76,14 +84,10 @@ const showNotification = () => {
   }, 3000);
 };
 
+const LogOut = () => {
+  router.push({ path: `/login` });
+};
 
-    const LogOut = () => {
-      // Удаляем токены из localStorage
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      // Перенаправляем пользователя на страницу логина
-      router.push({ path: `/login` });
-    };
 
     return {
       events,
@@ -93,7 +97,9 @@ const showNotification = () => {
       goToMembers, // убедитесь, что функция возвращается из setup
       LogOut,
       createLink,
-      copyLinkToClipboard
+      copyLinkToClipboard,
+      createEventClick,
+      editEvent,
     };
   },
 });
@@ -105,7 +111,7 @@ const showNotification = () => {
       <div class="logo">
         <img src="../assets/Logo.svg" alt="Logo">
       </div>
-      <button class="create-event blue-button" @click="createEvent()">Создать новое мероприятие</button>
+      <button class="create-event blue-button" @click="createEventClick()">Создать новое мероприятие</button>
       <button class="logout-button" @click="LogOut()">Выйти</button>
     </div>
     <div id="notification" class="notification">Ссылка скопирована в буфер обмена</div>
@@ -148,7 +154,7 @@ const showNotification = () => {
               <div class="event-actions">
                 <button class="event-button blue-button" @click="goToMembers(data.event_id)">Участники</button>
                 <button class="event-button blue-button"@click="copyLinkToClipboard(data.event_id)">Создать приглашение</button>
-                <button class="event-button blue-button">Изменить</button>
+                <button class="event-button blue-button"@click="editEvent(data.event_id)">Изменить</button>
               </div>
             </div>
           </template>
