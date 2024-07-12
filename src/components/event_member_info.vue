@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from "axios";
 
-//переменные для хранения данных
+// переменные для хранения данных
 const memberData = ref({
   firstName: '',
   middleName: '',
@@ -17,25 +17,25 @@ const memberData = ref({
   event: ''
 });
 
-//данные для получения мероприятия
+// данные для получения мероприятия
 const eventData = ref({
   name: '',
   date: ''
 });
 
-//id из маршрута
+// id из маршрута
 const route = useRoute();
 const memberId = route.params.id;
 console.log(memberId);
 
-//получение данных с сервера
+// получение данных с сервера
 const fetchMemeberInfo = async () => {
-  try{
-    const response = axios.get(`http://localhost:8080/api/event/memberInfo/${memberId}`)
-    if(!response === 200){
+  try {
+    const response = await axios.get(`http://localhost:8080/api/event/memberInfo/${memberId}`);
+    if (response.status !== 200) {
       throw new Error('Network response was not ok');
     }
-    const data = await response.json();
+    const data = response.data;
     memberData.value = {
       firstName: data.firstname,
       middleName: data.middlename,
@@ -48,43 +48,42 @@ const fetchMemeberInfo = async () => {
       clumemeber: data.clumemeber,
       event: data.eventId
     };
-    fetchEventInfo(data.eventId)
+    fetchEventInfo(data.eventId);
   } catch (error) {
-    console.error('There has been a problem with your fetch operation:', error)
+    console.error('There has been a problem with your fetch operation:', error);
   }
 };
 
 const fetchEventInfo = async (eventId) => {
-  try{
-    const response = axios.get(`http://localhost:8080/api/event/${eventId}/info`)
-    if(!response === 200){
+  try {
+    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/info`);
+    if (response.status !== 200) {
       throw new Error('Network response was not ok');
     }
-    const data = await response.json();
+    const data = response.data;
     eventData.value = {
       name: data.event_name,
       date: data.event_date
     };
   } catch (error) {
-    console.error('There has been a problem with your fetch operation:', error)
+    console.error('There has been a problem with your fetch operation:', error);
   }
 };
 
 const formatDate = (datetime) => {
-      const date = new Date(datetime);
-      return date.toLocaleString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    };
+  const date = new Date(datetime);
+  return date.toLocaleString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
 
 onMounted(() => {
-fetchMemeberInfo();
+  fetchMemeberInfo();
 });
-
 </script>
 
 <template>
