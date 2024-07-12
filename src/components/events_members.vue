@@ -121,8 +121,8 @@ const approve = async (userId) => {
     console.log('Approval successful:', approveResponse.data);
 
     // Отправка email
-    // const emailResponse = await axios.get(`/api/email/${userId}`);
-    // console.log('Email sent:', emailResponse.data);
+    const emailResponse = await axios.get(`/api/email/${userId}`);
+    console.log('Email sent:', emailResponse.data);
 
     // Обновление состояния пользователя в списке
     user.approved = true;
