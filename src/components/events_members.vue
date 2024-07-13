@@ -15,7 +15,7 @@ const event = ref([])
 const filterState = ref('');
 const searchQuery = ref('');
 const selectedUsers = ref([]);
-axios.defaults.baseURL = apiUrl;
+//axios.defaults.baseURL = apiUrl;
 // Получаем данные участников события при монтировании компонента
 const fetchMembers = async () => {
   try {

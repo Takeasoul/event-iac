@@ -40,7 +40,7 @@ const refreshAccessToken = async () => {
         return;
     }
     try {
-        const response = await axios.post('http://localhost:8080/api/auth/refresh', { refreshToken });
+        const response = await axios.post('/api/auth/refresh', { refreshToken });
         const { accessToken } = response.data;
         localStorage.setItem('accessToken', accessToken);
     } catch (error) {

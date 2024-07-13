@@ -16,7 +16,7 @@ export default defineComponent({
     const events = ref([]);
     const orgId = route.params.orgid;
     const GSLayoutNumeric = ref(markRaw(RawGSLayoutNumeric));
-    axios.defaults.baseURL = apiUrl;
+   // axios.defaults.baseURL = apiUrl;
     const router = useRouter();  // Определяем router здесь
 
     onMounted(async () => {

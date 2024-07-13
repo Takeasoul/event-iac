@@ -9,7 +9,7 @@ const formData = ref({
 const router = useRouter();
 const submitForm = async () => {
   try {
-    const response = await axios.post(`${apiUrl}/api/auth/adduser`, formData.value, {
+    const response = await axios.post(`/api/auth/adduser`, formData.value, {
       headers: {
         'Content-Type': 'application/json'
       }

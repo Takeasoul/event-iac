@@ -60,7 +60,7 @@
       onMounted(async () => {
         try {
           console.log(`Fetching event data for id: ${evId}`);
-          const response = await axios.get(`${apiUrl}/api/event/${evId}/info`);
+          const response = await axios.get(`/api/event/${evId}/info`);
           if (response.status === 200) {
             const data = response.data; // Данные находятся в response.data
             console.log('Fetched event data:', data);
@@ -78,7 +78,7 @@
       const submitForm = async () => {
         try {
           console.log('Submitting edited event data:', form.value);
-          const response = await axios.post(`${apiUrl}/api/event/editEvent/${evId}`, form.value, {
+          const response = await axios.post(`/api/event/editEvent/${evId}`, form.value, {
             headers: {
               'Content-Type': 'application/json'
             }

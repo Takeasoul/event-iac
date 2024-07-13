@@ -62,7 +62,7 @@ const formData = ref({
 
 const eventName = ref('');
 
-axios.defaults.baseURL = apiUrl;
+//axios.defaults.baseURL = apiUrl;
 
 const getEventInfo = async (eventId) => {
   try {

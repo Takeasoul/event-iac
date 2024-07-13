@@ -15,7 +15,7 @@ const submitForm = async () => {
     password: formData.value.password
   };
   try {
-    const response = await axios.post(`${apiUrl}/api/auth/login`, loginData);
+    const response = await axios.post(`/api/auth/login`, loginData);
     const { accessToken, refreshToken, user_id } = response.data;
 
     // Сохранение токенов в localStorage
