@@ -66,7 +66,7 @@ const eventName = ref('');
 
 const getEventInfo = async (eventId) => {
   try {
-    const response = await axios.get(`/api/event/${eventId}/info`);
+    const response = await axios.get(`https://eventforiac.onrender.com/api/event/${eventId}/info`);
     if (response.data && response.data.event_name) {
       eventName.value = response.data.event_name;
     } else {
@@ -81,11 +81,11 @@ const submitForm = async () => {
   const eventId = route.params.id;
   try {
 
-    const response = await axios.post(`/api/event/${eventId}/register`, formData.value);
+    const response = await axios.post(`https://eventforiac.onrender.com/api/event/${eventId}/register`, formData.value);
     console.log('Registration successful:', response.data);
     const userId = response.data.id; // Получаем ID созданного пользователя
     router.push('/approve');
-    const emailResponse = await axios.get(`/api/email/greetings/${userId}`);
+    const emailResponse = await axios.get(`https://eventforiac.onrender.com/api/email/greetings/${userId}`);
     console.log('Email send successful:', emailResponse.data);
     // Можно добавить обработку успешной регистрации, например, переход на другую страницу
   } catch (error) {

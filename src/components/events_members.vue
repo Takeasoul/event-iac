@@ -19,7 +19,7 @@ const selectedUsers = ref([]);
 // Получаем данные участников события при монтировании компонента
 const fetchMembers = async () => {
   try {
-    const response = await axios.get(`/api/event/${eventId}/members`);
+    const response = await axios.get(`https://eventforiac.onrender.com/api/event/${eventId}/members`);
     users.value = response.data || [];  // Добавляем проверку на отсутствие данных
     console.log(users.value);  // Выводим данные в консоль для проверки
   } catch (error) {
@@ -51,7 +51,7 @@ const filteredUsers = computed(() => {
 
 const fetchEvent = async () => {
   try {
-    const response = await axios.get(`/api/event/${eventId}/info`);
+    const response = await axios.get(`https://eventforiac.onrender.com/api/event/${eventId}/info`);
     event.value = response.data || [];  // Добавляем проверку на отсутствие данных
     console.debug(event.value);
     console.log(event.value);  // Выводим данные в консоль для проверки

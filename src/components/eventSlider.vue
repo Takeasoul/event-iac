@@ -22,7 +22,7 @@ export default defineComponent({
     onMounted(async () => {
       console.log('About to send fetch request...');
       try {
-        const response = await axios.get('/api/event/eventsAllByOrgId', {
+        const response = await axios.get('https://eventforiac.onrender.com/api/event/eventsAllByOrgId', {
           params: {
             orgId: orgId// Передаем orgId как параметр запроса
           }
@@ -53,7 +53,7 @@ export default defineComponent({
 
     const editEvent = (eventId) => {
       router.push({path: `/editEvent/${eventId}/${orgId}` });
-    }
+    };
 
     const createLink = (eventId) => {
       const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
