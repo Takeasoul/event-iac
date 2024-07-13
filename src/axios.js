@@ -73,10 +73,6 @@ axios.interceptors.response.use(
     }
 );
 
-const baseURL = 'https://event-iac.onrender.com';
-const instance = axios.create({
-    baseURL: baseURL,
-});
 
 // Возвращает настроенный экземпляр Axios
-export default instance;
+export default axios;
