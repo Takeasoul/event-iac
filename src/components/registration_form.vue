@@ -49,7 +49,7 @@ import VueInputMask from 'vue-input-mask';
 const route = useRoute();
 const router = useRouter();
 import {TheMask} from 'vue-the-mask'
-
+import { apiUrl } from '@/main.js';
 const formData = ref({
   middlename: '',
   firstname: '',
@@ -62,7 +62,7 @@ const formData = ref({
 
 const eventName = ref('');
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = apiUrl;
 
 const getEventInfo = async (eventId) => {
   try {

@@ -6,7 +6,7 @@ import 'gitart-scroll-carousel/dist/index.css';
 import 'gitart-scroll-carousel/dist/GSArrow.css';
 import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css';
 import axios from '../axios';
-
+import { apiUrl } from '@/main.js';
 export default defineComponent({
   components: {
     GSCarousel,
@@ -16,7 +16,7 @@ export default defineComponent({
     const events = ref([]);
     const orgId = route.params.orgid;
     const GSLayoutNumeric = ref(markRaw(RawGSLayoutNumeric));
-    axios.defaults.baseURL = 'http://localhost:8080';
+    axios.defaults.baseURL = apiUrl;
     const router = useRouter();  // Определяем router здесь
 
     onMounted(async () => {

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
-
+import { apiUrl } from '@/main.js';
 // Получаем ID события из роутера
 const route = useRoute();
 const eventId = route.params.id;
@@ -15,7 +15,7 @@ const event = ref([])
 const filterState = ref('');
 const searchQuery = ref('');
 const selectedUsers = ref([]);
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = apiUrl;
 // Получаем данные участников события при монтировании компонента
 const fetchMembers = async () => {
   try {
