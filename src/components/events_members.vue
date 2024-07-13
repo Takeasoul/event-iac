@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
-
+import { apiUrl } from '@/main.js';
 // Получаем ID события из роутера
 const route = useRoute();
 const eventId = route.params.id;
@@ -15,7 +15,7 @@ const event = ref([])
 const filterState = ref('');
 const searchQuery = ref('');
 const selectedUsers = ref([]);
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = apiUrl;
 // Получаем данные участников события при монтировании компонента
 const fetchMembers = async () => {
   try {
@@ -78,7 +78,7 @@ const selectAll = (event) => {
 function downloadBadges(){
   try {
     axios({
-      url: 'api/document/pdf/badges', // Download File URL Goes Here
+      url: `${apiUrl}/api/document/pdf/badges`,// Download File URL Goes Here
       method: 'GET',
       responseType: 'blob',
       params: {
@@ -121,7 +121,7 @@ const approve = async (userId) => {
     console.log('Approval successful:', approveResponse.data);
 
     // Отправка email
-    const emailResponse = await axios.get(`/api/email/${userId}`);
+    const emailResponse = await axios.get(`${apiUrl}/api/email/${userId}`);
     console.log('Email sent:', emailResponse.data);
 
     // Обновление состояния пользователя в списке

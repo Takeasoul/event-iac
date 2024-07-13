@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import {useRouter} from "vue-router";
-
+import { apiUrl } from '@/main.js';
 const formData = ref({
   login: '',
   password: ''
@@ -9,12 +9,10 @@ const formData = ref({
 const router = useRouter();
 const submitForm = async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/auth/adduser', {
-      method: 'POST',
+    const response = await axios.post(`${apiUrl}/api/auth/adduser`, formData.value, {
       headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData.value)
+      }
     });
 
     if (response.ok) {

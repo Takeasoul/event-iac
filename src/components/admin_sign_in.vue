@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { apiUrl } from '@/main.js';
 const formData = ref({
   login: '',
   password: ''
@@ -14,7 +15,7 @@ const submitForm = async () => {
     password: formData.value.password
   };
   try {
-    const response = await axios.post('http://localhost:8080/api/auth/login', loginData);
+    const response = await axios.post(`${apiUrl}/api/auth/login`, loginData);
     const { accessToken, refreshToken, user_id } = response.data;
 
     // Сохранение токенов в localStorage

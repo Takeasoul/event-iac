@@ -38,7 +38,7 @@
 <script>
 import { useRoute, useRouter } from 'vue-router';
 import axios from "axios";
-
+import { apiUrl } from '@/main.js';
 export default {
   setup() {
     const route = useRoute();
@@ -69,7 +69,7 @@ export default {
       this.form.ogr_id = this.orgId;
 
       try {
-        const response = await axios.post(`http://localhost:8080/api/event/createEvent`, this.form, {
+        const response = await axios.post(`${apiUrl}/api/event/createEvent`, this.form, {
           headers: {
             'Content-Type': 'application/json'
           }
