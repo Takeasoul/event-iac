@@ -78,7 +78,7 @@ const selectAll = (event) => {
 function downloadBadges(){
   try {
     axios({
-      url: 'api/document/pdf/badges', // Download File URL Goes Here
+      url: `${apiUrl}/api/document/pdf/badges`,// Download File URL Goes Here
       method: 'GET',
       responseType: 'blob',
       params: {
@@ -121,7 +121,7 @@ const approve = async (userId) => {
     console.log('Approval successful:', approveResponse.data);
 
     // Отправка email
-    const emailResponse = await axios.get(`/api/email/${userId}`);
+    const emailResponse = await axios.get(`${apiUrl}/api/email/${userId}`);
     console.log('Email sent:', emailResponse.data);
 
     // Обновление состояния пользователя в списке
