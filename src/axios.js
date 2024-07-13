@@ -1,4 +1,8 @@
 import axios from 'axios';
+import { apiUrl } from '@/main.js'; // Предполагается, что apiUrl настроен правильно
+
+// Установка базового URL для всех запросов Axios
+axios.defaults.baseURL = apiUrl;
 
 const publicRoutes = [
     '/:id/registration-form'
@@ -40,7 +44,7 @@ const refreshAccessToken = async () => {
         return;
     }
     try {
-        const response = await axios.post('http://localhost:8080/api/auth/refresh', { refreshToken });
+        const response = await axios.post('/api/auth/refresh', { refreshToken });
         const { accessToken } = response.data;
         localStorage.setItem('accessToken', accessToken);
     } catch (error) {

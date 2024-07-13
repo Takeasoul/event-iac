@@ -78,7 +78,7 @@ const selectAll = (event) => {
 function downloadBadges(){
   try {
     axios({
-      url: `${apiUrl}/api/document/pdf/badges`,// Download File URL Goes Here
+      url: `https://eventforiac.onrender.com/api/document/pdf/badges`,// Download File URL Goes Here
       method: 'GET',
       responseType: 'blob',
       params: {
@@ -117,11 +117,11 @@ const approve = async (userId) => {
 
   try {
     // Одобрение участника
-    const approveResponse = await axios.post(`/api/event/approve/${userId}`);
+    const approveResponse = await axios.post(`https://eventforiac.onrender.com/api/event/approve/${userId}`);
     console.log('Approval successful:', approveResponse.data);
 
     // Отправка email
-    const emailResponse = await axios.get(`${apiUrl}/api/email/${userId}`);
+    const emailResponse = await axios.get(`https://eventforiac.onrender.com/api/email/${userId}`);
     console.log('Email sent:', emailResponse.data);
 
     // Обновление состояния пользователя в списке
@@ -141,7 +141,7 @@ const unapprove = async (userId) => {
 
   try {
     // Одобрение участника
-    const approveResponse = await axios.post(`/api/event/unapprove/${userId}`);
+    const approveResponse = await axios.post(`https://eventforiac.onrender.com/api/event/unapprove/${userId}`);
     console.log('Approval successful:', approveResponse.data);
 
     // // Отправка email
