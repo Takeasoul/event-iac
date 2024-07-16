@@ -3,6 +3,7 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+
 // required styles for carousel and bottom scroll indicator
 import 'gitart-scroll-carousel/dist/index.css'
 // arrows styles if you want use default arrows..
@@ -11,6 +12,21 @@ import 'gitart-scroll-carousel/dist/GSArrow.css'
 // read more in the layouts section.
 import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css'
 
-import VueTheMask from 'vue-the-mask';
-export const apiUrl = 'http://77.222.38.40:8080';
-createApp(App).use(router).use(VueTheMask).mount('#app')
+
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+
+import VueTheMask from 'vue-the-mask'
+
+const app = createApp(App)
+
+// Import TinyMCE Editor and its styles
+import { Editor } from '@tinymce/tinymce-vue';
+
+
+
+app.component('Editor', Editor);
+app.use(router)
+app.use(VueTheMask)
+app.mount('#app')
+
+export const apiUrl = 'http://localhost:8080'

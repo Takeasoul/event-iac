@@ -19,7 +19,7 @@ const selectedUsers = ref([]);
 // Получаем данные участников события при монтировании компонента
 const fetchMembers = async () => {
   try {
-    const response = await axios.get(`http://77.222.38.40:8080/api/event/${eventId}/members`);
+    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/members`);
     users.value = response.data || [];  // Добавляем проверку на отсутствие данных
     console.log(users.value);  // Выводим данные в консоль для проверки
   } catch (error) {
@@ -51,7 +51,7 @@ const filteredUsers = computed(() => {
 
 const fetchEvent = async () => {
   try {
-    const response = await axios.get(`http://77.222.38.40:8080/api/event/${eventId}/info`);
+    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/info`);
     event.value = response.data || [];  // Добавляем проверку на отсутствие данных
     console.debug(event.value);
     console.log(event.value);  // Выводим данные в консоль для проверки
@@ -78,7 +78,7 @@ const selectAll = (event) => {
 function downloadBadges(){
   try {
     axios({
-      url: `http://77.222.38.40:8080/api/document/pdf/badges`,// Download File URL Goes Here
+      url: `http://localhost/api/document/pdf/badges`,// Download File URL Goes Here
       method: 'GET',
       responseType: 'blob',
       params: {
@@ -117,11 +117,11 @@ const approve = async (userId) => {
 
   try {
     // Одобрение участника
-    const approveResponse = await axios.post(`http://77.222.38.40:8080/api/event/approve/${userId}`);
+    const approveResponse = await axios.post(`http://localhost:8080/api/event/approve/${userId}`);
     console.log('Approval successful:', approveResponse.data);
 
     // Отправка email
-    const emailResponse = await axios.get(`http://77.222.38.40:8080/api/email/${userId}`);
+    const emailResponse = await axios.get(`http://localhost:8080/api/email/${userId}`);
     console.log('Email sent:', emailResponse.data);
 
     // Обновление состояния пользователя в списке
@@ -141,7 +141,7 @@ const unapprove = async (userId) => {
 
   try {
     // Одобрение участника
-    const approveResponse = await axios.post(`http://77.222.38.40:8080/api/event/unapprove/${userId}`);
+    const approveResponse = await axios.post(`http://localhost:8080/api/event/unapprove/${userId}`);
     console.log('Approval successful:', approveResponse.data);
 
     // // Отправка email

@@ -15,7 +15,7 @@ const submitForm = async () => {
     password: formData.value.password
   };
   try {
-    const response = await axios.post(`http://77.222.38.40:8080/api/auth/login`, loginData);
+    const response = await axios.post(`http://localhost:8080/api/auth/login`, loginData);
     const { accessToken, refreshToken, user_id } = response.data;
 
     // Сохранение токенов в localStorage
@@ -95,13 +95,13 @@ header {
   height: 400px;
   padding: 30px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
                 0 6px 20px rgba(0, 0, 0, 0.1);
   background: rgb(255, 255, 255);
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10%; 
+  margin-top: 10%;
 }
 h1{
   color: rgb(63, 85, 101);

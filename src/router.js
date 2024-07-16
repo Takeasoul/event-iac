@@ -12,6 +12,7 @@ import eventMemberInfo from './components/event_member_info.vue'
 import approve_registration from './components/approve_registration.vue'
 import createEvent from './components/createEvent.vue'
 import editEvent from './components/editEvent.vue'
+import templates_edit from "@/components/templates_edit.vue";
 
 const routes = [
     { path: '/login', component: admin_sign_in },
@@ -25,6 +26,7 @@ const routes = [
     {path: '/event-member-info/:id', component: eventMemberInfo},
     {path: '/createEvent/:orgid', component: createEvent},
     {path: '/editEvent/:evId/:orgId', component: editEvent},
+    {path: '/templates', component: templates_edit},
 ]
 
 const router = createRouter({

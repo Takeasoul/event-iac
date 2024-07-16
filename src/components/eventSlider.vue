@@ -22,7 +22,7 @@ export default defineComponent({
     onMounted(async () => {
       console.log('About to send fetch request...');
       try {
-        const response = await axios.get('https://eventforiac.onrender.com/api/event/eventsAllByOrgId', {
+        const response = await axios.get('http://localhost:8080/api/event/eventsAllByOrgId', {
           params: {
             orgId: orgId// Передаем orgId как параметр запроса
           }

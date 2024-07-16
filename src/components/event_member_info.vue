@@ -31,7 +31,7 @@ console.log(memberId);
 // получение данных с сервера
 const fetchMemeberInfo = async () => {
   try {
-    const response = await axios.get(`http://77.222.38.40:8080/api/event/memberInfo/${memberId}`);
+    const response = await axios.get(`http://localhost:8080/api/event/memberInfo/${memberId}`);
     if (response.status !== 200) {
       throw new Error('Network response was not ok');
     }
@@ -56,7 +56,7 @@ const fetchMemeberInfo = async () => {
 
 const fetchEventInfo = async (eventId) => {
   try {
-    const response = await axios.get(`http://77.222.38.40:8080/api/event/${eventId}/info`);
+    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/info`);
     if (response.status !== 200) {
       throw new Error('Network response was not ok');
     }
