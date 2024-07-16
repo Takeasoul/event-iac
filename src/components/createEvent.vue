@@ -69,7 +69,7 @@ export default {
       this.form.ogr_id = this.orgId;
 
       try {
-        const response = await axios.post(`https://eventforiac.onrender.com/api/event/createEvent`, this.form, {
+        const response = await axios.post(`http://77.222.38.40:8080/api/event/createEvent`, this.form, {
           headers: {
             'Content-Type': 'application/json'
           }

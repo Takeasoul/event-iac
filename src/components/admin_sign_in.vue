@@ -15,7 +15,7 @@ const submitForm = async () => {
     password: formData.value.password
   };
   try {
-    const response = await axios.post(`https://eventforiac.onrender.com/api/auth/login`, loginData);
+    const response = await axios.post(`http://77.222.38.40:8080/api/auth/login`, loginData);
     const { accessToken, refreshToken, user_id } = response.data;
 
     // Сохранение токенов в localStorage

@@ -60,7 +60,7 @@
       onMounted(async () => {
         try {
           console.log(`Fetching event data for id: ${evId}`);
-          const response = await axios.get(`https://eventforiac.onrender.com/api/event/${evId}/info`);
+          const response = await axios.get(`http://77.222.38.40:8080/api/event/${evId}/info`);
           if (response.status === 200) {
             const data = response.data; // Данные находятся в response.data
             console.log('Fetched event data:', data);
@@ -78,7 +78,7 @@
       const submitForm = async () => {
         try {
           console.log('Submitting edited event data:', form.value);
-          const response = await axios.post(`https://eventforiac.onrender.com/api/event/editEvent/${evId}`, form.value, {
+          const response = await axios.post(`http://77.222.38.40:8080/api/event/editEvent/${evId}`, form.value, {
             headers: {
               'Content-Type': 'application/json'
             }

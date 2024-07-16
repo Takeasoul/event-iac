@@ -12,5 +12,5 @@ import 'gitart-scroll-carousel/dist/GSArrow.css'
 import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css'
 
 import VueTheMask from 'vue-the-mask';
-export const apiUrl = 'https://eventforiac.onrender.com';
+export const apiUrl = 'http://77.222.38.40:8080';
 createApp(App).use(router).use(VueTheMask).mount('#app')

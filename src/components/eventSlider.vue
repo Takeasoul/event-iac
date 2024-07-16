@@ -124,8 +124,8 @@ const showNotification = () => {
       <div class="carousel-wrapper">
         <GSCarousel
             :items="events"
-            item-gap="14"
-            :items-to-show="2"
+            item-gap="10"
+            :items-to-show="3"
             :layout="GSLayoutNumeric"
             :layout-props="{
             disableArrows: false,
