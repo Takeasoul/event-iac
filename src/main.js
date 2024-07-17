@@ -16,7 +16,7 @@ import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 import VueTheMask from 'vue-the-mask'
-import {QuillEditor} from "@vueup/vue-quill";
+import CKEditor from '@ckeditor/ckeditor5-vue';
 
 const app = createApp(App)
 
@@ -24,7 +24,7 @@ const app = createApp(App)
 
 
 
-app.component('QuillEditor', QuillEditor);
+app.use(CKEditor);
 app.use(router)
 app.use(VueTheMask)
 app.mount('#app')

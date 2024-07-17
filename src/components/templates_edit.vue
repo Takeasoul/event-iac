@@ -1,120 +1,152 @@
 <template>
-  <div>
-    <!-- Вывод списка шаблонов -->
-    <ul>
-      <li v-for="template in templates" :key="template.name">
-        <button @click="selectTemplate(template.name)">Выбрать</button>
-        <span>{{ template.name }}</span>
-      </li>
-    </ul>
+  <div class="template-editor">
+    <!-- Template Selector -->
+    <div class="template-selector">
+      <select v-model="selectedTemplateId" @change="loadTemplate">
+        <option v-for="template in templates" :key="template" :value="template">{{ template }}</option>
+      </select>
+      <button @click="loadTemplate">Load Template</button>
+    </div>
 
-    <!-- Блок для отображения и редактирования HTML содержимого -->
-    <div class="html-editor" v-if="htmlContent !== null">
-      <!-- Рендеринг текущего HTML содержимого -->
-      <div v-html="htmlContent"></div>
+    <!-- Editor and Preview -->
+    <div class="editor-preview" v-if="templateContent !== null">
+      <ckeditor :editor="editor" v-model="content"></ckeditor>
+      <div class="html-preview" v-html="compiledContent"></div>
+    </div>
 
-      <!-- Поле для редактирования -->
-      <textarea v-model="editedHtmlContent" rows="10" cols="50"></textarea>
-
-      <!-- Кнопки для сохранения и скачивания -->
-      <button @click="saveChanges">Сохранить изменения</button>
-      <button @click="downloadTemplate">Скачать шаблон</button>
+    <!-- Actions: Save Changes and Download Template -->
+    <div class="actions">
+      <button @click="saveChanges">Save Changes</button>
+      <button @click="downloadTemplate">Download Template</button>
     </div>
   </div>
 </template>
 
 <script>
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
 
 export default {
   data() {
     return {
-      templates: [],           // Список доступных шаблонов
-      selectedTemplateName: '', // Имя выбранного шаблона
-      htmlContent: null,       // Текущее HTML содержимое шаблона
-      editedHtmlContent: ''    // Редактируемое HTML содержимое
+      templates: [],               // Список доступных шаблонов
+      selectedTemplateId: null,    // Выбранный ID шаблона
+      templateContent: null,       // Текущий HTML контент шаблона
+      content: '',                 // Отредактированный контент в редакторе
+      editor: ClassicEditor,       // Используемый редактор CKEditor 5
     };
   },
-  mounted() {
-    // Получаем список доступных шаблонов при загрузке компонента
-    this.fetchTemplates();
+  computed: {
+    compiledContent() {
+      return this.content;
+    }
   },
   methods: {
-    // Получение списка доступных шаблонов
-    fetchTemplates() {
-      axios.get('http://localhost:8080/api/templates')
-          .then(response => {
-            this.templates = response.data.map(name => ({name}));
-          })
-          .catch(error => {
-            console.error('Ошибка при получении списка шаблонов', error);
-          });
+    // Fetches the list of available templates from the server
+    async fetchTemplates() {
+      try {
+        const response = await axios.get('http://localhost:8080/api/templates');
+        console.log('Templates fetched:', response.data); // Логирование ответа сервера
+        this.templates = response.data;
+      } catch (error) {
+        console.error('Error fetching templates', error);
+      }
     },
-    // Выбор шаблона для редактирования
-    selectTemplate(templateName) {
-      this.selectedTemplateName = templateName;
-      this.editedHtmlContent = ''; // Очищаем редактируемое содержимое перед загрузкой нового шаблона
-
-      axios.get(`http://localhost:8080/api/templates/${templateName}`)
-          .then(response => {
-            this.htmlContent = response.data;
-            this.editedHtmlContent = response.data; // Загружаем HTML содержимое для редактирования
-          })
-          .catch(error => {
-            console.error('Ошибка при загрузке шаблона', error);
-          });
-    },
-    // Сохранение изменений в шаблоне
-    saveChanges() {
-      if (!this.selectedTemplateName) {
-        alert('Выберите шаблон для сохранения изменений');
+    // Loads the selected template's HTML content into the editor
+    async loadTemplate() {
+      if (!this.selectedTemplateId) {
+        alert('Select a template to load');
         return;
       }
 
-      axios.post(`http://localhost:8080/api/templates/save/${this.selectedTemplateName}`, {htmlContent: this.editedHtmlContent})
-          .then(response => {
-            console.log('Изменения сохранены');
-            this.htmlContent = this.editedHtmlContent; // Обновляем текущее содержимое после сохранения
-          })
-          .catch(error => {
-            console.error('Ошибка сохранения изменений', error);
-          });
+      try {
+        const response = await axios.get(`http://localhost:8080/api/templates/${this.selectedTemplateId}`);
+        console.log('Template content fetched:', response.data); // Логирование ответа сервера
+        this.templateContent = response.data;
+        this.content = this.templateContent; // Load HTML content for editing
+      } catch (error) {
+        console.error('Error loading template', error);
+      }
     },
-    // Скачивание отредактированного шаблона
-    downloadTemplate() {
-      if (!this.selectedTemplateName) {
-        alert('Выберите шаблон для скачивания');
+    // Saves changes made in the editor back to the server
+    async saveChanges() {
+      if (!this.selectedTemplateId) {
+        alert('Select a template to save changes');
         return;
       }
 
-      axios.get(`http://localhost:8080/api/templates/download/${this.selectedTemplateName}`, {responseType: 'blob'})
-          .then(response => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${this.selectedTemplateName}.html`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          })
-          .catch(error => {
-            console.error('Ошибка скачивания шаблона', error);
-          });
+      try {
+        await axios.post(`http://localhost:8080/api/templates/save/${this.selectedTemplateId}`, { content: this.content }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Changes saved');
+        this.templateContent = this.content; // Update current content after saving
+      } catch (error) {
+        console.error('Error saving changes', error);
+      }
+    },
+    // Downloads the edited template as an HTML file
+    async downloadTemplate() {
+      if (!this.selectedTemplateId) {
+        alert('Select a template to download');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:8080/api/templates/download/${this.selectedTemplateId}`, { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${this.selectedTemplateId}.html`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading template', error);
+      }
     }
+  },
+  mounted() {
+    // Fetch list of available templates when the component is mounted
+    this.fetchTemplates();
   }
 };
 </script>
 
 <style>
+.template-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 20px;
+}
+
+.template-selector {
+  display: flex;
+  gap: 10px;
+}
+
+.editor-preview {
+  display: flex;
+  gap: 20px;
+}
+
 .html-editor {
-  margin-top: 20px;
+  width: 50%;
+  height: 400px;
+}
+
+.html-preview {
+  width: 50%;
   border: 1px solid #ccc;
   padding: 10px;
   background-color: #f9f9f9;
 }
 
-.html-editor textarea {
-  margin-top: 10px;
-  width: 100%;
+.actions {
+  display: flex;
+  gap: 10px;
 }
 </style>
