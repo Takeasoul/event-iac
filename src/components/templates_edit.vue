@@ -61,12 +61,31 @@ export default {
 
       try {
         const response = await axios.get(`http://localhost:8080/api/templates/${this.selectedTemplateId}`);
-        console.log('Template content fetched:', response.data); // Логирование ответа сервера
-        this.templateContent = response.data;
-        this.content = this.templateContent; // Load HTML content for editing
+        console.log('Template content fetched:', response.data);
+
+        // Преобразование Thymeleaf атрибутов в HTML атрибуты
+        let htmlContent = response.data;
+        htmlContent = this.convertThymeleafToHtml(htmlContent);
+        console.log('Converted HTML:', htmlContent); // Вывод в консоль
+
+        this.templateContent = htmlContent;
+        this.content = htmlContent; // Используйте преобразованный контент для редактирования
       } catch (error) {
         console.error('Error loading template', error);
       }
+    },
+
+    convertThymeleafToHtml(content) {
+      content = content.replace(/th:text="([^"]*)"/g, 'data-th-text="$1"');
+      content = content.replace(/th:([^"]*)="([^"]*)"/g, 'data-th-$1="$2"');
+      return content;
+    },
+
+// Преобразование HTML атрибутов в Thymeleaf атрибуты
+    convertHtmlToThymeleaf(content) {
+      content = content.replace(/data-th-text="([^"]*)"/g, 'th:text="$1"');
+      content = content.replace(/data-th-([^"]*)="([^"]*)"/g, 'th:$1="$2"');
+      return content;
     },
     // Saves changes made in the editor back to the server
     async saveChanges() {
@@ -76,7 +95,8 @@ export default {
       }
 
       try {
-        await axios.post(`http://localhost:8080/api/templates/save/${this.selectedTemplateId}`, { content: this.content }, {
+        const contentToSave = this.processThymeleaf(this.content, 'toThymeleaf'); // Преобразование обратно в Thymeleaf синтаксис
+        await axios.post(`http://localhost:8080/api/templates/save/${this.selectedTemplateId}`, { content: contentToSave }, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -106,6 +126,17 @@ export default {
       } catch (error) {
         console.error('Error downloading template', error);
       }
+    },
+    // Преобразование Thymeleaf синтаксиса
+    processThymeleaf(content, mode) {
+      if (mode === 'toText') {
+        return content.replace(/th:text="([^"]*)"/g, 'data-th-text="$1"')
+            .replace(/th:([^"]*)="([^"]*)"/g, 'data-th-$1="$2"');
+      } else if (mode === 'toThymeleaf') {
+        return content.replace(/data-th-text="([^"]*)"/g, 'th:text="$1"')
+            .replace(/data-th-([^"]*)="([^"]*)"/g, 'th:$1="$2"');
+      }
+      return content;
     }
   },
   mounted() {
