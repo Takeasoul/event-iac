@@ -12,13 +12,18 @@ export default defineComponent({
     GSCarousel,
   },
   setup() {
+
     const route = useRoute();
     const events = ref([]);
     const orgId = route.params.orgid;
     const GSLayoutNumeric = ref(markRaw(RawGSLayoutNumeric));
    // axios.defaults.baseURL = apiUrl;
     const router = useRouter();  // Определяем router здесь
+    const isDropdownOpen = ref(false);
 
+    const toggleDropdown = () => {
+      isDropdownOpen.value = !isDropdownOpen.value;
+    };
     onMounted(async () => {
       console.log('About to send fetch request...');
       try {
@@ -58,6 +63,10 @@ export default defineComponent({
       router.push({path: `/editEvent/${eventId}/${orgId}` });
     };
 
+    const editEventTemplate = (eventId) => {
+      router.push({path: `/templates/${eventId}` });
+    };
+
     const createLink = (eventId) => {
       const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
       return registrationLink;
@@ -87,6 +96,8 @@ const showNotification = () => {
   }, 3000);
 };
 
+
+
     const LogOut = () => {
       // Удаляем токены из localStorage
       localStorage.removeItem('accessToken');
@@ -107,6 +118,9 @@ const showNotification = () => {
       copyLinkToClipboard,
       createEventClick,
       editEvent,
+      editEventTemplate,
+      isDropdownOpen,
+      toggleDropdown,
     };
   },
 });
@@ -169,8 +183,14 @@ const showNotification = () => {
               <div class="event-actions">
                 <button class="event-button blue-button" @click="goToMembers(data.id)">Участники</button>
                 <button class="event-button blue-button"@click="copyLinkToClipboard(data.id)">Создать приглашение</button>
-                <button class="event-button blue-button"@click="editEvent(data.id)">Изменить</button>
-              </div>
+                <div class="dropdown"  @mouseenter="toggleDropdown" @mouseleave="toggleDropdown">
+                  <button class="event-button blue-button">Изменить</button>
+                  <div v-if="isDropdownOpen" class="dropdown-menu">
+                    <button class="dropdown-item" @click="editEvent(data.id)">Изменить мероприятие</button>
+                    <button class="dropdown-item" @click="editEventTemplate(data.id)">Изменить шаблоны мероприятия</button>
+                  </div>
+                </div>
+            </div>
             </div>
           </template>
         </GSCarousel>
@@ -266,7 +286,11 @@ const showNotification = () => {
   color: #000000;
 }
 
-
+:deep(.gsc-track__item){
+  padding-top: 45px;
+  padding-bottom: 45px;
+  height: 670px;
+}
 
 .content {
   display: flex;
@@ -286,7 +310,7 @@ const showNotification = () => {
 
 .event-card {
   width: 400px; /* Increase the width */
-  height: 500px; /* Increase the height */
+  height: 580px; /* Increase the height */
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45),
@@ -394,6 +418,58 @@ const showNotification = () => {
 .logout-button:hover{
   background-color:  #ab4a4a;
   transition: all 0.5s ease;
+}
+
+.event-actions .dropdown {
+
+  position: relative;
+  display: inline-block;
+}
+
+.event-button.blue-button {
+  padding: 10px 16px;
+  width: 100%;
+
+}
+
+.dropdown-menu {
+  display: block;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  right: 0; /* Выравнивание меню по правому краю кнопки */
+  border-radius: 5px;
+  min-width: 160px; /* Установите минимальную ширину для лучшего отображения текста */
+}
+
+.dropdown-item {
+
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(63, 85, 101);
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-family: "Inter-light";
+  font-size:16px;
+  font-weight: 200;
+  width: 100%;
+}
+
+.dropdown-item:hover {
+  background-color:  rgb(134, 166, 189);
+  transition: all 0.5s ease;
+}
+
+.dropdown-menu .dropdown-item {
+  border-bottom: 1px solid #ddd;
+}
+
+.dropdown-menu .dropdown-item:last-child {
+  border-bottom: none;
 }
 
 

@@ -4,7 +4,10 @@ import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
-import { apiUrl } from '@/main.js';
+import config from "@/configApi.js";
+
+
+
 // Получаем ID события из роутера
 const route = useRoute();
 const eventId = route.params.id;
@@ -25,7 +28,7 @@ const fetchMembers = async () => {
       eventId: eventId // Убедитесь, что eventId не null или undefined
     };
 
-    const response = await axios.get('http://localhost:8080/api/v1/event-members', { params });
+    const response = await axios.get(`${config.url}/api/v1/event-members`, { params });
     // Извлечение массива пользователей из объекта
     users.value = response.data.data || [];
     console.log(users.value);
@@ -123,7 +126,11 @@ const approve = async (userId) => {
 
   try {
     // Одобрение участника
-    const approveResponse = await axios.post(`http://localhost:8080/api/event/approve/${userId}`);
+    const approveResponse = await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, {
+      params: {
+        approvement: "APPROVED"
+      }
+    });
     console.log('Approval successful:', approveResponse.data);
 
     // Отправка email
@@ -146,8 +153,11 @@ const unapprove = async (userId) => {
   }
 
   try {
-    // Одобрение участника
-    const approveResponse = await axios.post(`http://localhost:8080/api/event/unapprove/${userId}`);
+    const approveResponse = await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, {
+      params: {
+        approvement: "NOT_APPROVED"
+      }
+    });
     console.log('Approval successful:', approveResponse.data);
 
     // // Отправка email
@@ -247,7 +257,7 @@ const getStatusLabel = (status) => {
           <td>{{ user.company }}</td>
           <td>{{ user.position }}</td>
           <td>{{ user.email }}</td>
-          <td>{{ user.firstname }} {{ user.middlename }} {{ user.lastname }}</td>
+          <td>{{ user.lastname }} {{ user.firstname }} {{ user.middlename }} </td>
           <td>{{ user.phone }}</td>
           <td><button @click="approve(user.id)">✅</button></td>
           <td><button @click="unapprove(user.id)">❌</button></td>
