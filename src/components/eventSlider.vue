@@ -1,41 +1,89 @@
+<template>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <img src="../assets/Logo.svg" alt="Logo">
+      </div>
+      <button class="create-event blue-button" @click="createEventClick()">Создать новое мероприятие</button>
+      <button class="logout-button" @click="LogOut()">Выйти</button>
+    </div>
+    <div id="notification" class="notification">Ссылка скопирована в буфер обмена</div>
+    <div class="content">
+      <div class="title">Мои мероприятия</div>
+      <div class="table-controls">
+        <input type="checkbox" id="selectAll" @change="toggleSelectAll" />
+        <label for="selectAll">Выбрать все</label>
+      </div>
+      <table class="events-table">
+        <thead>
+          <tr>
+            <th>Выбрать</th>
+            <th>Название</th>
+            <th>Адрес</th>
+            <th>Дата и время</th>
+            <th>Состояние</th>
+            <th>Начало регистрации</th>
+            <th>Конец регистрации</th>
+            <th>Описание</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="event in events" :key="event.id">
+            <td>
+              <input type="checkbox" :value="event.id" v-model="selectedEvents" @change="toggleSelectEvent(event.id)" />
+            </td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.address }}</td>
+            <td>{{ formatDate(event.date) }}</td>
+            <td>{{ getStatus(event.reg_open) }}</td>
+            <td>{{ formatDate(event.startRegistrationDate) }}</td>
+            <td>{{ formatDate(event.closeRegistrationDate) }}</td>
+            <td>{{ event.summary }}</td>
+            <td class="action-buttons">
+              <div class="dropdown" @mouseenter="toggleDropdown(event.id)" @mouseleave="toggleDropdown(null)">
+                <button class="event-button blue-button">Действия</button>
+                <div v-if="isDropdownOpen === event.id" class="dropdown-menu">
+                  <button class="dropdown-item" @click="goToEventMemebersPage(event.id)">Участники</button>
+                  <button class="dropdown-item" @click="goToEditPage(event.id)">Изменить</button>
+                  <button class="dropdown-item" @click="copyLinkToClipboard(event.id)">Скопировать приглашение</button>
+                  <button class="dropdown-item" @click="goToEventPage(event.id)">Изменить шаблоны</button>
+                  <button class="dropdown-item delete" @click="deleteSelected">Удалить</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="actions">
+        <button class="event-button blue-button" @click="deleteSelected">Удалить выбранные</button>
+      </div>
+      <div class="active-events">Активных мероприятий: {{ events.length }}</div>
+    </div>
+  </div>
+</template>
 <script>
-import { defineComponent, ref, onMounted, markRaw } from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import { GSCarousel, GSLayoutNumeric as RawGSLayoutNumeric } from 'gitart-scroll-carousel/bundled';
-import 'gitart-scroll-carousel/dist/index.css';
-import 'gitart-scroll-carousel/dist/GSArrow.css';
-import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css';
+import { defineComponent, ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import axios from '../axios';
-import { apiUrl } from '@/main.js';
-export default defineComponent({
-  components: {
-    GSCarousel,
-  },
-  setup() {
 
+export default defineComponent({
+  setup() {
     const route = useRoute();
     const events = ref([]);
     const orgId = route.params.orgid;
-    const GSLayoutNumeric = ref(markRaw(RawGSLayoutNumeric));
-   // axios.defaults.baseURL = apiUrl;
-    const router = useRouter();  // Определяем router здесь
-    const isDropdownOpen = ref(false);
+    const router = useRouter();
+    const selectedEvents = ref([]);
+    const isDropdownOpen = ref(null); // Track which dropdown is open
 
-    const toggleDropdown = () => {
-      isDropdownOpen.value = !isDropdownOpen.value;
-    };
     onMounted(async () => {
-      console.log('About to send fetch request...');
       try {
         const params = {
           pageNumber: 0,
           pageSize: 8,
-          orgId: orgId // Убедитесь, что orgId не null или undefined
+          orgId: orgId,
         };
         const response = await axios.get(`http://localhost:8080/api/v1/events`, { params });
-        console.log('Received data:', response.data);
-
-        // Обновляем events.value, извлекая массив из поля data
         events.value = response.data.data || [];
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -55,155 +103,99 @@ export default defineComponent({
 
     const getStatus = (status) => (status ? 'Открыта' : 'Закрыта');
 
-    const goToMembers = (eventId) => {
-      router.push({ path: `/event/${eventId}/members` });
+    const goToEventPage = (eventId) => {
+      router.push({ path: `/event/${eventId}` });
     };
 
-    const editEvent = (eventId) => {
-      router.push({path: `/editEvent/${eventId}/${orgId}` });
-    };
+    const goToEventMemebersPage = (eventId) => {
+      router.push({path:`/event/${eventId}/members` });
+    }
 
-    const editEventTemplate = (eventId) => {
-      router.push({path: `/templates/${eventId}` });
-    };
-
-    const createLink = (eventId) => {
-      const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
-      return registrationLink;
-    };
-
-    const createEventClick = async () => {
-      router.push({ path: `/createEvent/${orgId}` });
-    };
+    const goToEditPage = (eventId, orgId) => {
+      router.push({path:`/editEvent/${eventId}/${orgId}`})
+    }
 
     const copyLinkToClipboard = async (eventId) => {
-  const registrationLink = createLink(eventId);
-  try {
-    await navigator.clipboard.writeText(registrationLink);
-    console.log('Ссылка скопирована в буфер обмена:', registrationLink);
-    showNotification();
-  } catch (error) {
-    console.error('Не удалось скопировать ссылку:', error);
-    // Здесь можно добавить обработку ошибки, например, показ сообщения об ошибке
-  }
-};
+      const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
+      try {
+        await navigator.clipboard.writeText(registrationLink);
+        console.log('Ссылка скопирована в буфер обмена:', registrationLink);
+        showNotification();
+      } catch (error) {
+        console.error('Не удалось скопировать ссылку:', error);
+      }
+    };
 
-const showNotification = () => {
-  const notification = document.getElementById('notification');
-  notification.classList.add('show');
-  setTimeout(() => {
-    notification.classList.remove('show');
-  }, 3000);
-};
+    const showNotification = () => {
+      const notification = document.getElementById('notification');
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    };
 
+    const toggleDropdown = (eventId) => {
+      isDropdownOpen.value = isDropdownOpen.value === eventId ? null : eventId;
+    };
 
+    const deleteSelected = () => {
+      // Implement deletion logic here
+      console.log('Deleting events with IDs:', selectedEvents.value);
+      // Example:
+      // axios.delete(`http://localhost:8080/api/v1/events`, { data: { ids: selectedEvents.value } })
+      //   .then(response => {
+      //     // Handle successful deletion
+      //   })
+      //   .catch(error => {
+      //     console.error('Error deleting events:', error);
+      //   });
+    };
 
     const LogOut = () => {
-      // Удаляем токены из localStorage
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      // Перенаправляем пользователя на страницу логина
       router.push({ path: `/login` });
     };
 
+    const toggleSelectAll = () => {
+      if (selectedEvents.value.length === events.value.length) {
+        selectedEvents.value = [];
+      } else {
+        selectedEvents.value = events.value.map(event => event.id);
+      }
+    };
+
+    const toggleSelectEvent = (eventId) => {
+      if (selectedEvents.value.includes(eventId)) {
+        selectedEvents.value = selectedEvents.value.filter(id => id !== eventId);
+      } else {
+        selectedEvents.value.push(eventId);
+      }
+    };
 
     return {
       events,
-      GSLayoutNumeric,
       formatDate,
       getStatus,
-      goToMembers, // убедитесь, что функция возвращается из setup
+      goToEventPage,
+      goToEventMemebersPage,
+      selectedEvents,
+      toggleSelectAll,
+      toggleSelectEvent,
+      deleteSelected,
       LogOut,
-      createLink,
       copyLinkToClipboard,
-      createEventClick,
-      editEvent,
-      editEventTemplate,
       isDropdownOpen,
       toggleDropdown,
+      goToEditPage,
     };
   },
 });
 </script>
-
-<template>
-  <div class="container">
-    <div class="header">
-      <div class="logo">
-        <img src="../assets/Logo.svg" alt="Logo">
-      </div>
-      <button class="create-event blue-button" @click="createEventClick()">Создать новое мероприятие</button>
-      <button class="logout-button" @click="LogOut()">Выйти</button>
-    </div>
-    <div id="notification" class="notification">Ссылка скопирована в буфер обмена</div>
-    <div class="content">
-      <div class="title">Мои мероприятия</div>
-      <div class="carousel-wrapper">
-        <GSCarousel
-            :items="events"
-            item-gap="10"
-            :items-to-show="3"
-            :layout="GSLayoutNumeric"
-            :layout-props="{
-            disableArrows: false,
-            disableCounter: false,
-            disableIndicator: true,
-            disableSlide: true,
-          }"
-        >
-          <template #item="{ data }">
-            <div class="event-card">
-              <div class="event-name">{{ data.name }}</div>
-              <div class="event-details">
-                <div class="event-detail">
-                  <label>Адрес:</label>
-                  <span>{{ data.address}}</span>
-                </div>
-                <div class="event-detail">
-                  <label>Дата и время:</label>
-                  <span>{{ formatDate(data.date) }}</span>
-                </div>
-                <div class="event-detail">
-                  <label>Состояние:</label>
-                  <span>{{ getStatus(data.reg_open) }}</span>
-                </div>
-                <div class="event-detail">
-                  <label>Начало регистрации:</label>
-                  <span>{{ formatDate(data.startRegistrationDate) }}</span>
-                </div>
-                <div class="event-detail">
-                  <label>Конец регистрации:</label>
-                  <span>{{ formatDate(data.closeRegistrationDate) }}</span>
-                </div>
-                <div class="event-description">
-                  <label>Описание:</label>
-                  <span>{{ data.summary }}</span>
-                </div>
-              </div>
-              <div class="event-actions">
-                <button class="event-button blue-button" @click="goToMembers(data.id)">Участники</button>
-                <button class="event-button blue-button"@click="copyLinkToClipboard(data.id)">Создать приглашение</button>
-                <div class="dropdown"  @mouseenter="toggleDropdown" @mouseleave="toggleDropdown">
-                  <button class="event-button blue-button">Изменить</button>
-                  <div v-if="isDropdownOpen" class="dropdown-menu">
-                    <button class="dropdown-item" @click="editEvent(data.id)">Изменить мероприятие</button>
-                    <button class="dropdown-item" @click="editEventTemplate(data.id)">Изменить шаблоны мероприятия</button>
-                  </div>
-                </div>
-            </div>
-            </div>
-          </template>
-        </GSCarousel>
-      </div>
-      <div class="active-events">Активных мероприятий: {{ events.length }}</div>
-    </div>
-  </div>
-</template>
-
 <style scoped>
 .notification {
   visibility: hidden;
-  width: 300px; /* Увеличение ширины */
+  width: 300px;
   background-color: rgb(63, 85, 101);
   color: #fff;
   font-family: "Inter-light";
@@ -211,13 +203,12 @@ const showNotification = () => {
   font-weight: 400;
   text-align: center;
   border-radius: 8px;
-  padding: 20px; /* Увеличение padding */
+  padding: 20px;
   position: fixed;
-  z-index: 1000; /* Перекрытие всех остальных элементов */
+  z-index: 1000;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); /* Центрирование по горизонтали и вертикали */
-  font-size: 20px; /* Увеличение размера текста */
+  transform: translate(-50%, -50%);
   opacity: 0;
   transition: visibility 0s, opacity 0.5s linear;
 }
@@ -236,47 +227,37 @@ const showNotification = () => {
 }
 
 .header {
-  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
   padding: 10px;
   background-color: #fff;
+  justify-content: space-between;
 }
 
-.logo {
-  margin-right: 40px;
-  color: #000000;
-}
+.logo img {
 
-.logo svg {
-  fill: #000000; /* Set the fill color of the logo */
 }
 
 .create-event {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 25px;
+  padding: 15px 30px;
   border: none;
   border-radius: 5px;
-  background-color: #0000ff; /* Assuming blue button background color */
+  background-color: #0000ff;
   color: #fff;
   cursor: pointer;
   font-family: "Inter-Regular";
-  font-weight: 400;
+  font-size: 16px;
 }
 
 .logout-button {
-  margin-left: auto;
   padding: 10px 25px;
   border: none;
   border-radius: 5px;
-  background-color: #930404;
+  background-color: #e63946;
   color: #fff;
   cursor: pointer;
   font-family: "Inter-Regular";
-  font-weight: 400;
 }
 
 .title {
@@ -284,12 +265,6 @@ const showNotification = () => {
   font-size: 2.5rem;
   font-weight: 400;
   color: #000000;
-}
-
-:deep(.gsc-track__item){
-  padding-top: 45px;
-  padding-bottom: 45px;
-  height: 670px;
 }
 
 .content {
@@ -302,134 +277,63 @@ const showNotification = () => {
   border-radius: 5px;
 }
 
-.carousel-wrapper {
-  width: 100%;
-  max-width: 1200px;
+.table-controls {
+  display: flex;
+  align-items: center;
   margin-bottom: 20px;
 }
 
-.event-card {
-  width: 400px; /* Increase the width */
-  height: 580px; /* Increase the height */
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45),
-                0 6px 20px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  padding-top: 30px;
-  display: flex; /* Add this to make the card a flex container */
-  flex-direction: column; /* Stack the elements vertically */
-  font-family: "Inter-Regular";
-  font-size:28px;
-  font-weight: 400;
-}
-
-.event-name {
-  font-family: "Inter-Regular";
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: #000000;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.event-details {
-  font-family: "Intrer-light";
-  font-weight: 400;
-  flex: 1; /* Take up the remaining space */
-  text-align: left;
-  padding-top: 20px;
-  padding-left: 25px;
-  padding-bottom: 10px;
-  font-size: 20px;
-}
-
-.event-detail {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.event-detail label {
-  font-weight: 400;
-  margin-right: 20px;
-  color: #000000;
-}
-
-.event-detail span {
-  color: #000000;
-
-}
-
-.event-description label {
-  font-weight: 400;
-  margin-bottom: 5px;
-  color: #000000;
+.table-controls input[type="checkbox"] {
   margin-right: 10px;
 }
 
-.event-description span {
-  color: #000000;
+.events-table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-bottom: 40px; /* Increased margin bottom */
 }
 
-.event-actions {
-  display: grid; /* Make the actions a flex container */
-  justify-content:center; /* Space the buttons evenly */
-  margin-top: -20px; /* Move the buttons up to overlap with the description */
-  padding-bottom: 20px; /* Add some padding to separate from the card bottom */
-  padding-bottom: 1%;
+.events-table th, .events-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-family: "Inter-light";
+}
+
+.events-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.events-table td {
+  font-size: 16px;
+  word-wrap: break-word;
+  max-width: 200px;
+}
+
+.events-table td.action-buttons {
+  position: relative;
 }
 
 .event-button {
   padding: 10px 16px;
   border: none;
   border-radius: 5px;
-  background-color: rgb(63, 85, 101);
+  background-color: #0000ff; /* Same blue color as the create event button */
   color: #fff;
   cursor: pointer;
-  font-weight: bold;
-  margin-bottom: 10px;
-  font-family: "Inter-light";
-  font-size:18px;
-  font-weight: 400;
-}
-
-.active-events {
-  font-family: "Inter-light";
-  font-size: 24px;
-  font-weight: 400;
-  color: rgb(63, 85, 101);
-}
-
-.create-event{
-  padding: 10px;
   font-family: "Inter-light";
   font-size: 16px;
-  font-weight: 400;
-  border:none;
-  border-radius: 5px;
-  color:white;
-  background-color: rgb(63, 85, 101);;
-}
-.blue-button:hover{
-  background-color:  rgb(134, 166, 189);
-  transition: all 0.5s ease;
-}
-.logout-button:hover{
-  background-color:  #ab4a4a;
-  transition: all 0.5s ease;
+  margin-bottom: 10px;
+  white-space: nowrap; /* Ensure the text does not wrap */
 }
 
-.event-actions .dropdown {
+.event-button:hover {
+  background-color: #0000b3; /* Darker blue on hover */
+}
 
+.dropdown {
   position: relative;
-  display: inline-block;
-}
-
-.event-button.blue-button {
-  padding: 10px 16px;
-  width: 100%;
-
 }
 
 .dropdown-menu {
@@ -438,56 +342,54 @@ const showNotification = () => {
   background-color: #fff;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
-  right: 0; /* Выравнивание меню по правому краю кнопки */
+  right: 0;
   border-radius: 5px;
-  min-width: 160px; /* Установите минимальную ширину для лучшего отображения текста */
+  min-width: 160px;
 }
 
 .dropdown-item {
-
   padding: 10px 16px;
   border: none;
   border-radius: 5px;
-  background-color: rgb(63, 85, 101);
+  background-color: #0000ff; /* Same blue color */
   color: #fff;
   cursor: pointer;
-  font-weight: bold;
-  margin-bottom: 5px;
   font-family: "Inter-light";
-  font-size:16px;
-  font-weight: 200;
+  font-size: 16px;
   width: 100%;
+  white-space: nowrap;
 }
 
 .dropdown-item:hover {
-  background-color:  rgb(134, 166, 189);
-  transition: all 0.5s ease;
+  background-color: #0000b3; /* Darker blue on hover */
 }
 
-.dropdown-menu .dropdown-item {
-  border-bottom: 1px solid #ddd;
+.dropdown-item.delete {
+  background-color: #ff4d4d; /* Red color for delete button */
 }
 
-.dropdown-menu .dropdown-item:last-child {
-  border-bottom: none;
+.dropdown-item.delete:hover {
+  background-color: #cc0000; /* Darker red on hover */
 }
 
+.active-events {
+  font-family: "Inter-Regular";
+  font-size: 16px;
+  margin-top: 20px;
+}
 
-@font-face {
-  font-family: "Inter-regular";
-  src: url(/src/fonts/Inter-Regular.ttf);
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
-@font-face {
-  font-family: "Inter-light";
-  src: url(/src/fonts/Inter-Light.ttf);
-}
-@media screen and (max-width: 768px) {
-  .carousel-wrapper {
-    max-width: 100%;
-  }
 
-  .event-card {
-    width: 100%;
-  }
+.actions .event-button {
+  margin-left: 0;
 }
+
+input[type="checkbox"] {
+  margin: 0;
+}
+
 </style>

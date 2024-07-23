@@ -18,6 +18,6 @@ import Quill from 'quill';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 
 
-createApp(App).use(CKEditor).use(router).use(VueTheMask).mount('#app');
+createApp(App).use(CKEditor).use(VueTheMask).use(router).mount('#app');
 
 export const apiUrl = 'http://localhost:8080';

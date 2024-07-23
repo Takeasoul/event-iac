@@ -204,28 +204,30 @@ const getStatusLabel = (status) => {
   </header>
   <div class="user-table">
     <h2>Участники "{{ event.name }}"</h2>
-    <div class="search-bar">
-      <input type="text" v-model="searchQuery" placeholder=" Поиск" class="input-with-icon"/>
-    </div>
-    <div class="filter-buttons">
-      <button
+    <div class="search-filter-container">
+      <div class="search-bar">
+        <input type="text" v-model="searchQuery" placeholder=" Поиск" class="input-with-icon"/>
+      </div>
+      <div class="filter-buttons">
+        <button
           :class="{ active: filterState === 'Рассмотрение' }"
           @click="filterByState('Рассмотрение')"
-      >
-        Рассмотрение
-      </button>
-      <button
+        >
+          Рассмотрение
+        </button>
+        <button
           :class="{ active: filterState === 'Одобрено' }"
           @click="filterByState('Одобрено')"
-      >
-        Одобрено
-      </button>
-      <button
+        >
+          Одобрено
+        </button>
+        <button
           :class="{ active: filterState === 'Отклонено' }"
           @click="filterByState('Отклонено')"
-      >
-        Отклонено
-      </button>
+        >
+          Отклонено
+        </button>
+      </div>
     </div>
     <div class="download-button">
       <button @click="downloadBadges()" class="downloadButtons">
@@ -236,32 +238,34 @@ const getStatusLabel = (status) => {
     <div class="table-wrapper">
       <table>
         <thead>
-        <tr>
-          <th><input type="checkbox" @change="selectAll($event)" /></th>
-          <th>№</th>
-          <th>Состояние</th>
-          <th>Организация</th>
-          <th>Должность</th>
-          <th>Email</th>
-          <th>ФИО</th>
-          <th>Телефон</th>
-          <th>Одобрить</th>
-          <th>Отклонить</th>
-        </tr>
+          <tr>
+            <th><input type="checkbox" @change="selectAll($event)" /></th>
+            <th>№</th>
+            <th>Статус участника</th>
+            <th>Состояние</th>
+            <th>Организация</th>
+            <th>Должность</th>
+            <th>Email</th>
+            <th>ФИО</th>
+            <th>Телефон</th>
+            <th>Одобрить</th>
+            <th>Отклонить</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(user, index) in filteredUsers" :key="user.id">
-          <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
-          <td>{{ index + 1 }}</td>
-          <td>{{ getStatusLabel(user.approvement) }}</td>
-          <td>{{ user.company }}</td>
-          <td>{{ user.position }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.lastname }} {{ user.firstname }} {{ user.middlename }} </td>
-          <td>{{ user.phone }}</td>
-          <td><button @click="approve(user.id)">✅</button></td>
-          <td><button @click="unapprove(user.id)">❌</button></td>
-        </tr>
+          <tr v-for="(user, index) in filteredUsers" :key="user.id">
+            <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
+            <td>{{ index + 1 }}</td>
+            <td>{{ getStatusLabel(user.approvement) }}</td>
+            <td>{{ getStatusLabel(user.approvement) }}</td>
+            <td>{{ user.company }}</td>
+            <td>{{ user.position }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.lastname }} {{ user.firstname }} {{ user.middlename }}</td>
+            <td>{{ user.phone }}</td>
+            <td><button @click="approve(user.id)">✅</button></td>
+            <td><button @click="unapprove(user.id)">❌</button></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -272,15 +276,16 @@ const getStatusLabel = (status) => {
   </div>
 </template>
 
+
 <style scoped>
 .user-table {
-  width: 100%;
-  max-width: 1800px;
+  width: 90%; /* Увеличьте ширину таблицы */
+  max-width: 1200px;
   margin: 0 auto;
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 1rem;
+  /* Убрали тень */
 }
 
 header {
@@ -288,17 +293,12 @@ header {
   position: absolute;
   width: 291px;
   height: 100px;
-  left: 42px;
-  top: 10px;
+  left: 20px;
+  top: 20px;
 }
 
 h2 {
   text-align: left;
-  width: 638.03px;
-  height: 47px;
-  position: absolute;
-  top: 80px;
-  left: 335px;
   color: rgba(63, 85, 101, 1);
   padding: 10px;
   box-sizing: border-box;
@@ -306,29 +306,19 @@ h2 {
   font-size: 32px;
   font-weight: 700;
   line-height: 39px;
-
-  position: relative; /* Важно для позиционирования псевдоэлемента */
+  position: relative;
+  border-bottom: 3px solid black; /* Линия под заголовком */
 }
 
-h2::after {
-  content: "";
-  display: block;
-  width: 70%; /* Установите нужную длину линии */
-  height: 3px; /* Толщина линии */
-  background-color: black; /* Цвет линии */
-  position: absolute;
-  bottom: -10px; /* Положение линии относительно h2 */
+.search-filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .search-bar {
-  margin-top: 1px;
-  margin-bottom: 1rem;
-  width: 400px;
-  height: 40px;
-  position: absolute;
-  top: 229px;
-  left: 375px;
-
+  width: 60%; /* Уменьшите ширину поиска */
 }
 
 .search-bar input {
@@ -344,17 +334,11 @@ h2::after {
 }
 
 .filter-buttons {
-  margin-top: 80px;
-  margin-bottom: 1rem;
-  width: 400px;
-  height: 40px;
-  position: absolute;
-  top: 150px;
-  left: 840px;
+  display: flex;
+  gap: 10px;
 }
 
 .filter-buttons button {
-  margin-right: 10px;
   padding: 0.5rem;
   font-size: 1rem;
   border: 1px solid #000000;
@@ -375,42 +359,13 @@ h2::after {
   color: white;
 }
 
-
-.search-bar {
-  margin-top: 1px;
-  margin-bottom: 1rem;
-  width: 400px;
-  height: 40px;
-  position: absolute;
-  top: 229px;
-  left: 375px;
-
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #000000;
-  border-radius: 5px;
-  font-family: "Inter-regular";
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 30px;
-}
-
 .download-button {
-  margin-top: 80px;
   margin-bottom: 1rem;
-  width: 400px;
-  height: 40px;
-  position: absolute;
-  top: 150px;
-  left: 1440px;
+  display: flex;
+  justify-content: center;
 }
 
 .download-button button {
-  margin-right: 10px;
   padding: 0.5rem;
   font-size: 1rem;
   border: 1px solid #000000;
@@ -426,16 +381,10 @@ h2::after {
   background-color: #ddd;
 }
 
-
-
 .table-wrapper {
-  margin-top: 130px;
   overflow-y: auto;
-  max-height: 550px; /* Adjust this value based on your needs */
-  width: 1900px;
-  position: absolute;
-  top: 180px;
-  left: 349px;
+  max-height: 600px; /* Установите высоту по вашим требованиям */
+  margin-top: 1rem;
 }
 
 table {
@@ -443,24 +392,23 @@ table {
   border-collapse: collapse;
 }
 
-td {
+td, th {
   padding: 1rem;
   text-align: center;
   background-color: #f0f0f0;
-  font-family: "Inter-light";
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 26px;
 }
 
 th {
-  padding: 0.75rem;
-  text-align: center;
-  background-color: #f0f0f0;
+  background-color: #e0e0e0;
   font-family: "Inter-regular";
   font-size: 18px;
   font-weight: 400;
-  line-height: 26px;
+}
+
+td {
+  font-family: "Inter-light";
+  font-size: 18px;
+  font-weight: 400;
 }
 
 button {
@@ -475,13 +423,11 @@ button:hover {
 }
 
 .footer {
-  text-align: left;
-  margin-top: 49rem;
+  text-align: center;
+  margin-top: 1rem;
   font-family: "Inter-regular";
   font-size: 20px;
   font-weight: 400;
-  line-height: 26px;
-  margin-left: 340px;
 }
 
 .footer button {
@@ -500,8 +446,10 @@ button:hover {
   font-family: "Inter-regular";
   src: url(/src/fonts/Inter-Regular.ttf);
 }
+
 @font-face {
   font-family: "Inter-light";
   src: url(/src/fonts/Inter-Light.ttf);
 }
+
 </style>

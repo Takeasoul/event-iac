@@ -1,17 +1,15 @@
-// src/router.js
-
-import { createRouter, createWebHistory } from 'vue-router'
-import admin_sign_in from './components/admin_sign_in.vue'
-import admin_sign_up from './components/admin_sign_up.vue'
-import admin_panel from './components/admin_panel.vue'
-import registration_form from './components/registration_form.vue'
-import approve from './components/approve.vue'
-import events_members from './components/events_members.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import admin_sign_in from '@/components/admin_sign_in.vue';
+import admin_sign_up from '@/components/admin_sign_up.vue';
+import admin_panel from '@/components/admin_panel.vue';
+import registration_form from '@/components/registration_form.vue';
+import approve from '@/components/approve.vue';
+import events_members from '@/components/events_members.vue';
 import eventSlider from "@/components/eventSlider.vue";
-import eventMemberInfo from './components/event_member_info.vue'
-import approve_registration from './components/approve_registration.vue'
-import createEvent from './components/createEvent.vue'
-import editEvent from './components/editEvent.vue'
+import eventMemberInfo from '@/components/event_member_info.vue';
+import approve_registration from '@/components/approve_registration.vue';
+import createEvent from '@/components/createEvent.vue';
+import editEvent from '@/components/editEvent.vue';
 import templates_edit from "@/components/templates_edit.vue";
 
 const routes = [
@@ -23,15 +21,15 @@ const routes = [
     { path: '/approve', component: approve },
     { path: '/approve-registration', component: approve_registration },
     { path: '/:orgid/events', component: eventSlider },
-    {path: '/event-member-info/:id', component: eventMemberInfo},
-    {path: '/createEvent/:orgid', component: createEvent},
-    {path: '/editEvent/:evId/:orgId', component: editEvent},
-    {path: '/templates/:evId', component: templates_edit},
-]
+    { path: '/event-member-info/:id', component: eventMemberInfo },
+    { path: '/createEvent/:orgid', component: createEvent },
+    { path: '/editEvent/:evId/:orgId', component: editEvent },
+    { path: '/templates/:evId', component: templates_edit },
+];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
-})
+});
 
-export default router
+export default router;

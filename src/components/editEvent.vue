@@ -149,7 +149,7 @@ export default {
           notification.value = 'Событие успешно обновлено!';
           setTimeout(() => {
             notification.value = '';
-            router.push({ path: `/${orgId}/events` }); // Перенаправление пользователя
+            router.back(orgId) // Перенаправление пользователя
           }, 3000); // 3 секунды задержки перед перенаправлением
         } else {
           console.error('Error updating event:', response.status);
