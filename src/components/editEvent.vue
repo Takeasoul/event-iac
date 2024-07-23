@@ -130,6 +130,14 @@ export default {
 
     const submitForm = async () => {
       try {
+        const date = new Date(form.value.date);
+      form.value.date = date.toISOString();
+
+      const Startdate = new Date(form.value.startRegistrationDate);
+      form.value.startRegistrationDate = Startdate.toISOString();
+
+      const Enddate = new Date(form.value.closeRegistrationDate);
+      form.value.closeRegistrationDate = Enddate.toISOString();
         console.log('ОТПРАВЛЯЮ', form.value)
         const response = await axios.put(`http://localhost:8080/api/v1/events/${eventId}`, form.value, {
           headers: {

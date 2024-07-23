@@ -77,6 +77,16 @@ export default {
     async submitForm() {
       // Добавляем org_id в данные формы
       this.form.organizerId = this.orgId;
+      console.log(this.form);
+
+      const date = new Date(this.form.date);
+      this.form.date = date.toISOString();
+
+      const Startdate = new Date(this.form.startRegistrationDate);
+      this.form.startRegistrationDate = Startdate.toISOString();
+
+      const Enddate = new Date(this.form.closeRegistrationDate);
+      this.form.closeRegistrationDate = Enddate.toISOString();
 
       try {
         const response = await axios.post(`http://localhost:8080/api/v1/events`, this.form, {
