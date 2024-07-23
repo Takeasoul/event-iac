@@ -22,13 +22,16 @@ export default defineComponent({
     onMounted(async () => {
       console.log('About to send fetch request...');
       try {
-        const response = await axios.get('http://localhost:8080/api/event/eventsAllByOrgId', {
-          params: {
-            orgId: orgId// Передаем orgId как параметр запроса
-          }
-        });
+        const params = {
+          pageNumber: 0,
+          pageSize: 8,
+          orgId: orgId // Убедитесь, что orgId не null или undefined
+        };
+        const response = await axios.get(`http://localhost:8080/api/v1/events`, { params });
         console.log('Received data:', response.data);
-        events.value = response.data;
+
+        // Обновляем events.value, извлекая массив из поля data
+        events.value = response.data.data || [];
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -136,29 +139,37 @@ const showNotification = () => {
         >
           <template #item="{ data }">
             <div class="event-card">
-              <div class="event-name">{{ data.event_name }}</div>
+              <div class="event-name">{{ data.name }}</div>
               <div class="event-details">
                 <div class="event-detail">
                   <label>Адрес:</label>
-                  <span>—</span>
+                  <span>{{ data.address}}</span>
                 </div>
                 <div class="event-detail">
                   <label>Дата и время:</label>
-                  <span>{{ formatDate(data.event_date) }}</span>
+                  <span>{{ formatDate(data.date) }}</span>
                 </div>
                 <div class="event-detail">
                   <label>Состояние:</label>
                   <span>{{ getStatus(data.reg_open) }}</span>
                 </div>
+                <div class="event-detail">
+                  <label>Начало регистрации:</label>
+                  <span>{{ formatDate(data.startRegistrationDate) }}</span>
+                </div>
+                <div class="event-detail">
+                  <label>Конец регистрации:</label>
+                  <span>{{ formatDate(data.closeRegistrationDate) }}</span>
+                </div>
                 <div class="event-description">
                   <label>Описание:</label>
-                  <span>{{ data.event_summary }}</span>
+                  <span>{{ data.summary }}</span>
                 </div>
               </div>
               <div class="event-actions">
-                <button class="event-button blue-button" @click="goToMembers(data.event_id)">Участники</button>
-                <button class="event-button blue-button"@click="copyLinkToClipboard(data.event_id)">Создать приглашение</button>
-                <button class="event-button blue-button"@click="editEvent(data.event_id)">Изменить</button>
+                <button class="event-button blue-button" @click="goToMembers(data.id)">Участники</button>
+                <button class="event-button blue-button"@click="copyLinkToClipboard(data.id)">Создать приглашение</button>
+                <button class="event-button blue-button"@click="editEvent(data.id)">Изменить</button>
               </div>
             </div>
           </template>
@@ -264,7 +275,7 @@ const showNotification = () => {
   width: 100%;
   padding: 20px;
   background-color: #fff;
-  border-radius: 5px; 
+  border-radius: 5px;
 }
 
 .carousel-wrapper {
@@ -278,7 +289,7 @@ const showNotification = () => {
   height: 500px; /* Increase the height */
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45), 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45),
                 0 6px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.5);
   padding-top: 30px;

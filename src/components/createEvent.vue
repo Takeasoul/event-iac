@@ -7,15 +7,23 @@
       <form @submit.prevent="submitForm">
         <div>
           <label for="event_name">Название события:</label>
-          <input type="text" v-model="form.event_name" required placeholder=""/>
+          <input type="text" v-model="form.name" required placeholder=""/>
         </div>
         <div>
           <label for="event_summary">Краткое описание:</label>
-          <textarea v-model="form.event_summary" required></textarea>
+          <textarea v-model="form.summary" required></textarea>
         </div>
         <div>
           <label for="event_date">Дата события:</label>
-          <input type="datetime-local" v-model="form.event_date" required />
+          <input type="datetime-local" v-model="form.date" required />
+        </div>
+        <div>
+          <label for="event_date">Начало регистрации:</label>
+          <input type="datetime-local" v-model="form.startRegistrationDate" required />
+        </div>
+        <div>
+          <label for="event_date">Конец регистрации:</label>
+          <input type="datetime-local" v-model="form.closeRegistrationDate" required />
         </div>
         <div>
           <label for="address">Адрес:</label>
@@ -53,12 +61,14 @@ export default {
   data() {
     return {
       form: {
-        ogr_id: '',
-        event_name: '',
-        event_summary: '',
-        event_date: '',
+        organizerId: '',
+        name: '',
+        summary: '',
+        date: '',
+        startRegistrationDate: '',
+        closeRegistrationDate: '',
         reg_open: false,
-        address: ''
+        address: '',
       },
       notification: ''
     };
@@ -66,10 +76,10 @@ export default {
   methods: {
     async submitForm() {
       // Добавляем org_id в данные формы
-      this.form.ogr_id = this.orgId;
+      this.form.organizerId = this.orgId;
 
       try {
-        const response = await axios.post(`http://localhost:8080/api/event/createEvent`, this.form, {
+        const response = await axios.post(`http://localhost:8080/api/v1/events`, this.form, {
           headers: {
             'Content-Type': 'application/json'
           }

@@ -58,6 +58,7 @@ const formData = ref({
   position: '',
   email: '',
   phone: '',
+  eventId: route.params.id,
 });
 
 const eventName = ref('');
@@ -66,9 +67,9 @@ const eventName = ref('');
 
 const getEventInfo = async (eventId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/info`);
-    if (response.data && response.data.event_name) {
-      eventName.value = response.data.event_name;
+    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
+    if (response.data && response.data.name && response.data.name.length > 0) {
+      eventName.value = response.data.name;
     } else {
       console.error('Failed to fetch event information.');
     }
@@ -81,7 +82,7 @@ const submitForm = async () => {
   const eventId = route.params.id;
   try {
 
-    const response = await axios.post(`http://localhost:8080/api/event/${eventId}/register`, formData.value);
+    const response = await axios.post(`http://localhost:8080/api/v1/event-members`, formData.value);
     console.log('Registration successful:', response.data);
     const userId = response.data.id; // Получаем ID созданного пользователя
     router.push('/approve');

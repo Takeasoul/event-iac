@@ -56,7 +56,7 @@ const fetchMemeberInfo = async () => {
 
 const fetchEventInfo = async (eventId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/info`);
+    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
     if (response.status !== 200) {
       throw new Error('Network response was not ok');
     }

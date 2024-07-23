@@ -19,18 +19,24 @@ const selectedUsers = ref([]);
 // Получаем данные участников события при монтировании компонента
 const fetchMembers = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/members`);
-    users.value = response.data || [];  // Добавляем проверку на отсутствие данных
-    console.log(users.value);  // Выводим данные в консоль для проверки
+    const params = {
+      pageNumber: 0,
+      pageSize: 8,
+      eventId: eventId // Убедитесь, что eventId не null или undefined
+    };
+
+    const response = await axios.get('http://localhost:8080/api/v1/event-members', { params });
+    // Извлечение массива пользователей из объекта
+    users.value = response.data.data || [];
+    console.log(users.value);
   } catch (error) {
-    console.error('Ошибка при получении данных участников:', error);
+    console.error('Ошибка при получении данных участников:', error.response ? error.response.data : error.message);
   }
 };
 
 onMounted(fetchMembers);
 
 
-// Фильтруем пользователей по поисковому запросу и состоянию
 const filteredUsers = computed(() => {
   return users.value.filter(user => {
     const matchesSearch =
@@ -40,9 +46,9 @@ const filteredUsers = computed(() => {
         (user.email && user.email.toLowerCase().includes(searchQuery.value.toLowerCase()));
 
     const matchesState = filterState.value
-        ? (filterState.value === 'Рассмотрение' && user.approved === null) ||
-        (filterState.value === 'Одобрено' && user.approved === true) ||
-        (filterState.value === 'Отклонено' && user.approved === false)
+        ? (filterState.value === 'Рассмотрение' && user.approvement === 'CONSIDERATION') ||
+        (filterState.value === 'Одобрено' && user.approvement === 'APPROVED') ||
+        (filterState.value === 'Отклонено' && user.approvement === 'NOT_APPROVED')
         : true;
 
     return matchesSearch && matchesState;
@@ -51,7 +57,7 @@ const filteredUsers = computed(() => {
 
 const fetchEvent = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/event/${eventId}/info`);
+    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
     event.value = response.data || [];  // Добавляем проверку на отсутствие данных
     console.debug(event.value);
     console.log(event.value);  // Выводим данные в консоль для проверки
@@ -167,6 +173,19 @@ const goBack = () => {
   console.log("SDASD")
 }
 
+const getStatusLabel = (status) => {
+  switch (status) {
+    case 'CONSIDERATION':
+      return 'Рассмотрение';
+    case 'APPROVED':
+      return 'Одобрено';
+    case 'NOT_APPROVED':
+      return 'Отклонено';
+    default:
+      return 'Неизвестно';
+  }
+};
+
 </script>
 
 <template>
@@ -174,9 +193,9 @@ const goBack = () => {
     <img src="../assets/Logo.svg" alt="">
   </header>
   <div class="user-table">
-    <h2>Участники "{{ event.event_name }}"</h2>
+    <h2>Участники "{{ event.name }}"</h2>
     <div class="search-bar">
-      <input type="text" v-model="searchQuery" placeholder=" Поиск"  class = "input-with-icon"/>
+      <input type="text" v-model="searchQuery" placeholder=" Поиск" class="input-with-icon"/>
     </div>
     <div class="filter-buttons">
       <button
@@ -199,9 +218,9 @@ const goBack = () => {
       </button>
     </div>
     <div class="download-button">
-    <button @click="downloadBadges()" class = "downloadButtons" >
+      <button @click="downloadBadges()" class="downloadButtons">
         Скачать бэйджи
-      <font-awesome-icon :icon="faDownload" class="pdf-icon"/>
+        <font-awesome-icon :icon="faDownload" class="pdf-icon"/>
       </button>
     </div>
     <div class="table-wrapper">
@@ -211,7 +230,7 @@ const goBack = () => {
           <th><input type="checkbox" @change="selectAll($event)" /></th>
           <th>№</th>
           <th>Состояние</th>
-          <th>Оргиназация</th>
+          <th>Организация</th>
           <th>Должность</th>
           <th>Email</th>
           <th>ФИО</th>
@@ -224,7 +243,7 @@ const goBack = () => {
         <tr v-for="(user, index) in filteredUsers" :key="user.id">
           <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
           <td>{{ index + 1 }}</td>
-          <td>{{ user.approved === null ? 'Рассмотрение' : (user.approved ? 'Одобрено' : 'Отклонено') }}</td>
+          <td>{{ getStatusLabel(user.approvement) }}</td>
           <td>{{ user.company }}</td>
           <td>{{ user.position }}</td>
           <td>{{ user.email }}</td>

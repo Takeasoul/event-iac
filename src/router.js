@@ -26,7 +26,7 @@ const routes = [
     {path: '/event-member-info/:id', component: eventMemberInfo},
     {path: '/createEvent/:orgid', component: createEvent},
     {path: '/editEvent/:evId/:orgId', component: editEvent},
-    {path: '/templates', component: templates_edit},
+    {path: '/templates/:evId', component: templates_edit},
 ]
 
 const router = createRouter({
