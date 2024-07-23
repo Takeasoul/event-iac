@@ -21,6 +21,7 @@ const submitForm = async () => {
     // Сохранение токенов в localStorage
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('user_id', user_id);
     console.log('Login successful:', response.data);
 
     // Перенаправление на страницу с userId, если токен успешно получен
