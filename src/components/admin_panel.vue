@@ -58,6 +58,7 @@ const selectAllEvents = (event) => {
 const editUser = (user) => {
   editedUser.value = { ...user }; // Клонируем данные пользователя
   showEditModal.value = true; // Показываем модальное окно
+  console.log("editedUser", editedUser);
 };
 
 const closeEditModal = () => {
