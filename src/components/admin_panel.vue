@@ -21,6 +21,10 @@ const editedUser = ref({ id: null, username: '', email: '', roles: [] });
 
 // Фильтруем пользователей по поисковому запросу
 const filteredUsers = computed(() => {
+  if (!Array.isArray(users.value)) {
+    console.error('users.value is not an array:', users.value);
+    return [];
+  }
   return users.value.filter(user =>
       user.username.includes(searchQuery.value) || user.email.includes(searchQuery.value)
   );
@@ -194,8 +198,6 @@ onMounted(async () => {
     console.error('Error fetching data:', error);
   }
 
-
-
   console.log('About to send fetch request for users...');
   try {
     const params = {
@@ -206,11 +208,10 @@ onMounted(async () => {
     console.log('Received user data:', response.data);
 
     // Обновляем users.value, извлекая массив из поля data
-    users.value = response.data || [];
+    users.value = response.data.data || [];
   } catch (error) {
     console.error('Error fetching user data:', error);
   }
-
 
   // Получаем список ролей
   await fetchRoles();
