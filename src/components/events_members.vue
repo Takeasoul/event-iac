@@ -6,44 +6,106 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import config from "@/configApi.js";
 
-
-
-// Получаем ID события из роутера
 const route = useRoute();
 const eventId = route.params.id;
 const router = useRouter();
-const users = ref([]);
-const event = ref([])
 
+const users = ref([]);
+const event = ref([]);
+const statuses = ref([]);
+const selectedUsers = ref([]);
 const filterState = ref('');
 const searchQuery = ref('');
-const selectedUsers = ref([]);
-//axios.defaults.baseURL = apiUrl;
-// Получаем данные участников события при монтировании компонента
+const showModal = ref(false);
+const editingUser = ref(null);
+
+// Fetching event members
 const fetchMembers = async () => {
   try {
     const params = {
       pageNumber: 0,
-      pageSize: 8,
-      eventId: eventId // Убедитесь, что eventId не null или undefined
+      pageSize: 1000,
+      eventId: eventId
     };
-
     const response = await axios.get(`${config.url}/api/v1/event-members`, { params });
-    // Извлечение массива пользователей из объекта
     users.value = response.data.data || [];
-    console.log(users.value);
   } catch (error) {
     console.error('Ошибка при получении данных участников:', error.response ? error.response.data : error.message);
   }
 };
 
-onMounted(fetchMembers);
+// Fetching event details
+const fetchEvent = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
+    event.value = response.data || [];
+  } catch (error) {
+    console.error('Ошибка при получении данных мероприятия:', error);
+  }
+};
+
+const fetchStatuses = async () => {
+  try {
+    console.log('Запрос к серверу');
+    const response = await axios.get(`${config.url}/api/v1/status/getAll`);
+    console.debug("Статусы от сервера", response.data); // Проверьте, что данные есть
+    statuses.value = response.data || [];
+    console.log('Статусы обновлены', statuses.value);
+  } catch (error) {
+    console.error('Ошибка при получении статусов:', error.response ? error.response.data : error.message);
+  }
+};
+// Open modal for editing
+const openEditModal = (user) => {
+  editingUser.value = { ...user };
+  showModal.value = true;
+
+  // Найти соответствующий статус в списке и установить его в editingUser.status
+  const userStatus = statuses.value.find(status => status.status === user.statusName);
+  if (userStatus) {
+    editingUser.value.status = userStatus.id; // Присвоить ID статуса
+  } else {
+    editingUser.value.status = null; // Если статус не найден
+  }
+
+  console.log('Редактирование пользователя:', editingUser.value);
+};
 
 
+// Close modal
+const closeModal = () => {
+  showModal.value = false;
+  editingUser.value = null;
+};
+
+// Save changes
+const saveChanges = async () => {
+  try {
+    console.log('Редактируемый пользователь перед сохранением:', editingUser.value);
+    console.log("status.id", editingUser.value.status)
+    await axios.put(`http://localhost:8080/api/v1/event-members/${editingUser.value.id}`, {
+      ...editingUser.value,
+      statusId: editingUser.value.status  // Передать status.id
+    });
+    console.log('Изменения сохранены');
+    closeModal();
+    fetchMembers();
+  } catch (error) {
+    console.error('Ошибка при сохранении изменений:', error);
+  }
+};
+
+// Fetch data on mount
+onMounted(() => {
+  fetchMembers();
+  fetchEvent();
+  fetchStatuses();
+});
+
+// Filtering function
 const filteredUsers = computed(() => {
   return users.value.filter(user => {
-    const matchesSearch =
-        (user.firstname && user.firstname.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
+    const matchesSearch = (user.firstname && user.firstname.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
         (user.middlename && user.middlename.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
         (user.lastname && user.lastname.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
         (user.email && user.email.toLowerCase().includes(searchQuery.value.toLowerCase()));
@@ -58,23 +120,10 @@ const filteredUsers = computed(() => {
   });
 });
 
-const fetchEvent = async () => {
-  try {
-    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
-    event.value = response.data || [];  // Добавляем проверку на отсутствие данных
-    console.debug(event.value);
-    console.log(event.value);  // Выводим данные в консоль для проверки
-  } catch (error) {
-    console.error('Ошибка при получении данных участников:', error);
-  }
-};
-onMounted(fetchEvent);
-// Функция для фильтрации по состоянию
 const filterByState = (state) => {
   filterState.value = filterState.value === state ? '' : state;
 };
 
-// Функция для выбора всех пользователей
 const selectAll = (event) => {
   if (event.target.checked) {
     selectedUsers.value = filteredUsers.value.map(user => user.id);
@@ -83,105 +132,53 @@ const selectAll = (event) => {
   }
 };
 
-
-function downloadBadges(){
+const downloadBadges = async () => {
   try {
-    axios({
-      url: `http://localhost/api/document/pdf/badges`,// Download File URL Goes Here
+    const response = await axios({
+      url: `http://localhost/api/document/pdf/badges`,
       method: 'GET',
       responseType: 'blob',
-      params: {
-        eventId: eventId,
-      },
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': ' GET, PUT, POST, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
-        'Access-Control-Allow-Credentials': 'false',
-      },
-
-    }).then((response) => {
-      var fileURL = window.URL.createObjectURL(new Blob([response.data]));
-      var fileLink = document.createElement('a');
-
-      fileLink.href = fileURL;
-      fileLink.setAttribute('download', 'badges.pdf');
-      document.body.appendChild(fileLink);
-
-      fileLink.click();
+      params: { eventId },
     });
-    console.log('Loading successful');
-  }catch (error) {
-    console.error('Error during loading pdf:', error);
+    const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+    const fileLink = document.createElement('a');
+    fileLink.href = fileURL;
+    fileLink.setAttribute('download', 'badges.pdf');
+    document.body.appendChild(fileLink);
+    fileLink.click();
+  } catch (error) {
+    console.error('Ошибка при загрузке PDF:', error);
   }
-}
+};
 
 const approve = async (userId) => {
-  const eventId = route.params.id;
-  const user = users.value.find(user => user.id === userId);
-  if (!user) {
-    console.error('User not found');
-    return;
-  }
-
   try {
-    // Одобрение участника
-    const approveResponse = await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, {
-      params: {
-        approvement: "APPROVED"
-      }
-    });
-    console.log('Approval successful:', approveResponse.data);
-
-    // Отправка email
-    const emailResponse = await axios.get(`http://localhost:8080/api/email/${userId}`);
-    console.log('Email sent:', emailResponse.data);
-
-    // Обновление состояния пользователя в списке
-    user.approved = true;
+    await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "APPROVED" } });
+    await axios.get(`http://localhost:8080/api/email/${userId}`);
+    users.value.find(user => user.id === userId).approved = true;
   } catch (error) {
-    console.error('Error during form submission:', error);
+    console.error('Ошибка при одобрении:', error);
   }
 };
 
 const unapprove = async (userId) => {
-  const eventId = route.params.id;
-  const user = users.value.find(user => user.id === userId);
-  if (!user) {
-    console.error('User not found');
-    return;
-  }
-
   try {
-    const approveResponse = await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, {
-      params: {
-        approvement: "NOT_APPROVED"
-      }
-    });
-    console.log('Approval successful:', approveResponse.data);
-
-    // // Отправка email
-    // const emailResponse = await axios.get(`/api/email/${userId}`);
-    // console.log('Email sent:', emailResponse.data);
-
-    // Обновление состояния пользователя в списке
-    user.approved = false;
+    await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "NOT_APPROVED" } });
+    users.value.find(user => user.id === userId).approved = false;
   } catch (error) {
-    console.error('Error during form submission:', error);
+    console.error('Ошибка при отклонении:', error);
   }
 };
 
-
-// Функция для удаления пользователя
 const deleteUser = (userId) => {
   if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
     users.value = users.value.filter(user => user.id !== userId);
   }
 };
+
 const goBack = () => {
   router.back();
-  console.log("SDASD")
-}
+};
 
 const getStatusLabel = (status) => {
   switch (status) {
@@ -195,9 +192,8 @@ const getStatusLabel = (status) => {
       return 'Неизвестно';
   }
 };
-
-
 </script>
+
 
 <template>
   <header>
@@ -210,24 +206,9 @@ const getStatusLabel = (status) => {
         <input type="text" v-model="searchQuery" placeholder=" Поиск" class="input-with-icon"/>
       </div>
       <div class="filter-buttons">
-        <button
-          :class="{ active: filterState === 'Рассмотрение' }"
-          @click="filterByState('Рассмотрение')"
-        >
-          Рассмотрение
-        </button>
-        <button
-          :class="{ active: filterState === 'Одобрено' }"
-          @click="filterByState('Одобрено')"
-        >
-          Одобрено
-        </button>
-        <button
-          :class="{ active: filterState === 'Отклонено' }"
-          @click="filterByState('Отклонено')"
-        >
-          Отклонено
-        </button>
+        <button :class="{ active: filterState === 'Рассмотрение' }" @click="filterByState('Рассмотрение')">Рассмотрение</button>
+        <button :class="{ active: filterState === 'Одобрено' }" @click="filterByState('Одобрено')">Одобрено</button>
+        <button :class="{ active: filterState === 'Отклонено' }" @click="filterByState('Отклонено')">Отклонено</button>
         <button @click="downloadBadges()" class="downloadButtons">
           Скачать бэйджи
           <font-awesome-icon :icon="faDownload" class="pdf-icon"/>
@@ -237,34 +218,36 @@ const getStatusLabel = (status) => {
     <div class="table-wrapper">
       <table>
         <thead>
-          <tr>
-            <th><input type="checkbox" @change="selectAll($event)" /></th>
-            <th>№</th>
-            <th>Статус участника</th>
-            <th>Состояние</th>
-            <th>Организация</th>
-            <th>Должность</th>
-            <th>Email</th>
-            <th>ФИО</th>
-            <th>Телефон</th>
-            <th>Одобрить</th>
-            <th>Отклонить</th>
-          </tr>
+        <tr>
+          <th><input type="checkbox" @change="selectAll($event)" /></th>
+          <th>№</th>
+          <th>Статус участника</th>
+          <th>Состояние</th>
+          <th>Организация</th>
+          <th>Должность</th>
+          <th>Email</th>
+          <th>ФИО</th>
+          <th>Телефон</th>
+          <th>Одобрить</th>
+          <th>Отклонить</th>
+          <th>Редактировать</th>
+        </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in filteredUsers" :key="user.id">
-            <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
-            <td>{{ index + 1 }}</td>
-            <td>{{ user.statusName }}</td>
-            <td>{{ getStatusLabel(user.approvement) }}</td>
-            <td>{{ user.company }}</td>
-            <td>{{ user.position }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.lastname }} {{ user.firstname }} {{ user.middlename }}</td>
-            <td>{{ user.phone }}</td>
-            <td><button @click="approve(user.id)">✅</button></td>
-            <td><button @click="unapprove(user.id)">❌</button></td>
-          </tr>
+        <tr v-for="(user, index) in filteredUsers" :key="user.id">
+          <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
+          <td>{{ index + 1 }}</td>
+          <td>{{ user.statusName }}</td>
+          <td>{{ getStatusLabel(user.approvement) }}</td>
+          <td>{{ user.company }}</td>
+          <td>{{ user.position }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.lastname }} {{ user.firstname }} {{ user.middlename }}</td>
+          <td>{{ user.phone }}</td>
+          <td><button @click="approve(user.id)">✅</button></td>
+          <td><button @click="unapprove(user.id)">❌</button></td>
+          <td><button @click="openEditModal(user)">✏️</button></td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -273,7 +256,36 @@ const getStatusLabel = (status) => {
       <button @click="goBack">Назад</button>
     </div>
   </div>
+
+  <div v-if="showModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Редактировать участника</h3>
+      <label>ФИО:</label>
+      <input type="text" v-model="editingUser.lastname" placeholder="Фамилия" />
+      <input type="text" v-model="editingUser.firstname" placeholder="Имя" />
+      <input type="text" v-model="editingUser.middlename" placeholder="Отчество" />
+      <label>Email:</label>
+      <input type="email" v-model="editingUser.email" />
+      <label>Телефон:</label>
+      <input type="text" v-model="editingUser.phone" />
+      <label>Организация:</label>
+      <input type="text" v-model="editingUser.company" />
+      <label>Должность:</label>
+      <input type="text" v-model="editingUser.position" />
+      <div v-if="editingUser">
+        <label for="status-select">Статус:</label>
+        <select v-model="editingUser.status" id="status-select">
+          <option v-for="status in statuses" :key="status.id" :value="status.id">
+            {{ status.status }}
+          </option>
+        </select>
+      </div>
+      <button @click="saveChanges">Сохранить</button>
+      <button @click="closeModal">Отмена</button>
+    </div>
+  </div>
 </template>
+
 
 
 <style scoped>
@@ -442,6 +454,37 @@ button:hover {
 
 .footer button:hover {
   background-color: #ddd;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 5px;
+  width: 50%;
+}
+
+.modal-content input, .modal-content select {
+  display: block;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.modal-content button {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  cursor: pointer;
 }
 
 @font-face {

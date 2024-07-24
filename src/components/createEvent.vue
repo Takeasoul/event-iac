@@ -31,7 +31,7 @@
         </div>
         <div>
           <label for="reg_open">Открыть регистрацию:</label>
-          <input type="checkbox" v-model="form.reg_open" />
+          <input type="checkbox" v-model="form.regOpen" />
         </div>
         <div class="button-container">
           <button type="submit">Создать мероприятие</button>
@@ -67,7 +67,7 @@ export default {
         date: '',
         startRegistrationDate: '',
         closeRegistrationDate: '',
-        reg_open: false,
+        regOpen: false,
         address: '',
       },
       notification: ''
@@ -94,7 +94,7 @@ export default {
             'Content-Type': 'application/json'
           }
         });
-        if (response.status === 200) {
+        if (response.status === 201) {
           this.notification = 'Событие успешно создано!';
           setTimeout(() => {
             this.notification = '';

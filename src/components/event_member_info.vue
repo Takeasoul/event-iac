@@ -45,7 +45,6 @@ const fetchMemeberInfo = async () => {
       email: data.email,
       phone: data.phone,
       approved: data.approved,
-      clumemeber: data.clumemeber,
       event: data.eventId
     };
     fetchEventInfo(data.eventId);

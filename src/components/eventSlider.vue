@@ -18,7 +18,7 @@
           <label for="selectAll">Выбрать все</label>
         </div>
         <div class="right-controls">
-          <button class="create-event blue-button" @click="createEventClick()">Создать новое мероприятие</button>
+          <button class="create-event blue-button" @click="goToCreatePage">Создать новое мероприятие</button>
           <button class="delete-event blue-button" @click="deleteSelected">Удалить выбранные</button>
         </div>
       </div>
@@ -45,7 +45,7 @@
             <td>{{ event.name }}</td>
             <td>{{ event.address }}</td>
             <td>{{ formatDate(event.date) }}</td>
-            <td>{{ getStatus(event.reg_open) }}</td>
+            <td>{{ getStatus(event.regOpen) }}</td>
             <td>{{ formatDate(event.startRegistrationDate) }}</td>
             <td>{{ formatDate(event.closeRegistrationDate) }}</td>
             <td>{{ event.summary }}</td>
@@ -60,7 +60,7 @@
                   <button class="dropdown-item" @click="goToEditPage(event.id)">Изменить</button>
                   <button class="dropdown-item" @click="copyLinkToClipboard(event.id)">Скопировать приглашение</button>
                   <button class="dropdown-item" @click="goToEventPage(event.id)">Изменить шаблоны</button>
-                  <button class="dropdown-item delete" @click="deleteSelected">Удалить</button>
+                  <button class="dropdown-item delete" @click="deleteSelected(event.id)">Удалить</button>
                 </div>
               </div>
             </td>
@@ -83,6 +83,7 @@ export default defineComponent({
     const route = useRoute();
     const events = ref([]);
     const searchQuery = ref('');
+
     const orgId = route.params.orgid;
     const router = useRouter();
     const selectedEvents = ref([]);
@@ -124,7 +125,11 @@ export default defineComponent({
     };
 
     const goToEditPage = (eventId, orgId) => {
-      router.push({path: `/editEvent/${eventId}/${orgId}`});
+      router.push({path: `/editEvent/${eventId}/${route.params.orgid}`});
+    };
+
+    const goToCreatePage = (eventId, orgId) => {
+      router.push({path: `/createEvent/${route.params.orgid}/`});
     };
 
     const copyLinkToClipboard = async (eventId) => {
@@ -163,22 +168,22 @@ export default defineComponent({
       }, 100); // Можно настроить задержку
     };
 
-    const deleteSelected = () => {
+    const deleteSelected = (eventId) => {
       // Implement deletion logic here
-      console.log('Deleting events with IDs:', selectedEvents.value);
-      // Example:
-      // axios.delete(`http://localhost:8080/api/v1/events`, { data: { ids: selectedEvents.value } })
-      //   .then(response => {
-      //     // Handle successful deletion
-      //   })
-      //   .catch(error => {
-      //     console.error('Error deleting events:', error);
-      //   });
+      console.log('Deleting events with IDs:', eventId);
+      axios.delete(`http://localhost:8080/api/v1/events/${eventId}`)
+        .then(response => {
+          // Handle successful deletion
+        })
+        .catch(error => {
+          console.error('Error deleting events:', error);
+        });
     };
 
     const LogOut = () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user_id')
       router.push({path: `/login`});
     };
 
@@ -221,6 +226,7 @@ export default defineComponent({
       goToEditPage,
       searchQuery,
       handleMouseLeave,
+      goToCreatePage,
       filteredEvents,
     };
   },
