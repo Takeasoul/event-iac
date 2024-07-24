@@ -58,6 +58,7 @@ const formData = ref({
   position: '',
   email: '',
   phone: '',
+  statusId: '',
   eventId: route.params.id,
 });
 
@@ -81,7 +82,6 @@ const getEventInfo = async (eventId) => {
 const submitForm = async () => {
   const eventId = route.params.id;
   try {
-
     const response = await axios.post(`http://localhost:8080/api/v1/event-members`, formData.value);
     console.log('Registration successful:', response.data);
     const userId = response.data.id; // Получаем ID созданного пользователя

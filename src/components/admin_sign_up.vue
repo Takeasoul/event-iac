@@ -2,8 +2,9 @@
 import { ref } from 'vue';
 import {useRouter} from "vue-router";
 import { apiUrl } from '@/main.js';
+import axios from "axios";
 const formData = ref({
-  login: '',
+  username: '',
   password: ''
 });
 const router = useRouter();
@@ -15,10 +16,10 @@ const submitForm = async () => {
       }
     });
 
-    if (response.ok) {
+    if (response.status === 201) {
       // Handle success, e.g., redirect to another page or show a success message
       router.push('/approve-registration');
-      console.log('User register successfully');
+      console.log('User registered successfully');
     } else {
       // Handle errors, e.g., show an error message
       console.error('Failed to register user');
@@ -41,7 +42,7 @@ const navigateToSignIn = async() => {
     <div class = "form-background">
       <h1>Добро пожаловать!</h1>
       <form id="registrationform" @submit.prevent="submitForm">
-        <input type="text" id="login" name="login" v-model="formData.login" required placeholder="Логин">
+        <input type="text" id="login" name="login" v-model="formData.username" required placeholder="Логин">
 
         <input type="email" id="email" name="email" required placeholder="Эл. почта">
 

@@ -38,6 +38,7 @@
     "slick-carousel": "^1.8.1",
     "tinymce": "^7.2.1",
     "vee-validate": "^4.5.8",
+    "vue": "^3.4.34",
     "vue-editor": "^0.0.0",
     "vue-input-mask": "^0.0.11",
     "vue-quill-editor": "^3.0.6",

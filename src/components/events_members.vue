@@ -196,6 +196,7 @@ const getStatusLabel = (status) => {
   }
 };
 
+
 </script>
 
 <template>
@@ -227,13 +228,11 @@ const getStatusLabel = (status) => {
         >
           Отклонено
         </button>
+        <button @click="downloadBadges()" class="downloadButtons">
+          Скачать бэйджи
+          <font-awesome-icon :icon="faDownload" class="pdf-icon"/>
+        </button>
       </div>
-    </div>
-    <div class="download-button">
-      <button @click="downloadBadges()" class="downloadButtons">
-        Скачать бэйджи
-        <font-awesome-icon :icon="faDownload" class="pdf-icon"/>
-      </button>
     </div>
     <div class="table-wrapper">
       <table>
@@ -256,7 +255,7 @@ const getStatusLabel = (status) => {
           <tr v-for="(user, index) in filteredUsers" :key="user.id">
             <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
             <td>{{ index + 1 }}</td>
-            <td>{{ getStatusLabel(user.approvement) }}</td>
+            <td>{{ user.statusName }}</td>
             <td>{{ getStatusLabel(user.approvement) }}</td>
             <td>{{ user.company }}</td>
             <td>{{ user.position }}</td>
@@ -280,7 +279,7 @@ const getStatusLabel = (status) => {
 <style scoped>
 .user-table {
   width: 90%; /* Увеличьте ширину таблицы */
-  max-width: 1200px;
+  max-width: 1700px;
   margin: 0 auto;
   background-color: #fff;
   border-radius: 5px;
@@ -318,7 +317,7 @@ h2 {
 }
 
 .search-bar {
-  width: 60%; /* Уменьшите ширину поиска */
+  width: 30%; /* Уменьшите ширину поиска */
 }
 
 .search-bar input {
@@ -383,14 +382,17 @@ h2 {
 
 .table-wrapper {
   overflow-y: auto;
-  max-height: 600px; /* Установите высоту по вашим требованиям */
+  max-height: 600px;
   margin-top: 1rem;
+  width: 100%; /* Добавьте это для фикса ширины */
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
+  width: 100%; /* Добавьте это для фикса ширины */
+  border-collapse: collapse; /* Убедитесь, что границы таблицы коллапсируют */
 }
+
+
 
 td, th {
   padding: 1rem;
