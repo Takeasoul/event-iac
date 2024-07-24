@@ -17,7 +17,7 @@ const isDropdownOpen = ref(null); // Track which dropdown is open
 
 // Переменные для модального окна редактирования
 const showEditModal = ref(false);
-const editedUser = ref({ id: null, username: '', email: '', roles: [] });
+const editedUser = ref({ id: null, username: '', roles: [] });
 
 // Фильтруем пользователей по поисковому запросу
 const filteredUsers = computed(() => {
@@ -233,13 +233,12 @@ onMounted(async () => {
   </div>
 
   <!-- Модальное окно редактирования пользователя -->
-  <div v-if="showEditModal" class="modal-overlay" @click="closeEditModal">
-    <div class="modal-content" @click.stop>
-      <h2>Редактировать пользователя</h2>
-      <form @submit.prevent="saveUserChanges">
-        <label for="username">Логин:</label>
-        <input v-model="editedUser.username" id="username" type="text" required />
-
+  <div v-if="showEditModal" class="modal-overlay" >
+    <div class="modal-content">
+      <h3>Редактировать Пользователя</h3>
+      <label>Данные:</label>
+      <input type="text" v-model="editedUser.username" placeholder="Логин" />
+      <div v-if="editingUser">
         <label for="roles">Роли:</label>
         <div class="custom-select">
           <select v-model="editedUser.roles" @change="updateRoles" id="roles" multiple>
@@ -247,10 +246,9 @@ onMounted(async () => {
             <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</option>
           </select>
         </div>
-
-        <button type="submit">Сохранить</button>
-        <button type="button" @click="closeEditModal">Отмена</button>
-      </form>
+        </div>
+      <button @click="saveChanges">Сохранить</button>
+      <button @click="closeEditModal">Отмена</button>
     </div>
   </div>
 
