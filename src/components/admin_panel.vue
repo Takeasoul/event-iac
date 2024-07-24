@@ -13,6 +13,7 @@ const searchQuery = ref('');
 const selectedUsers = ref([]);
 const selectedEvents = ref([]);
 const currentTable = ref('users'); // 'users' or 'events'
+const isDropdownOpen = ref(null); // Track which dropdown is open
 
 // Переменные для модального окна редактирования
 const showEditModal = ref(false);
@@ -134,6 +135,48 @@ const fetchRoles = async () => {
     console.error('Ошибка при получении ролей:', error);
   }
 };
+const formatDate = (datetime) => {
+      const date = new Date(datetime);
+      return date.toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    };
+
+const getStatus = (status) => (status ? 'Открыта' : 'Закрыта');
+
+const handleMouseLeave = (eventId) => {
+      // Поставьте таймаут для обработки покидания мыши с блока
+      setTimeout(() => {
+        if (!document.querySelector('.dropdown:hover')) {
+          toggleDropdown(eventId, false);
+        }
+      }, 100); // Можно настроить задержку
+    };
+
+    const toggleDropdown = (eventId, isOpen) => {
+      if (isOpen) {
+        isDropdownOpen.value = eventId;
+      } else {
+        isDropdownOpen.value = null;
+      }
+    };
+
+    const getStatusLabel = (status) => {
+  switch (status) {
+    case 'CONSIDERATION':
+      return 'Рассмотрение';
+    case 'APPROVED':
+      return 'Одобрено';
+    case 'NOT_APPROVED':
+      return 'Отклонено';
+    default:
+      return 'Неизвестно';
+  }
+};
 
 onMounted(async () => {
   console.log('About to send fetch request for events...');
@@ -155,7 +198,11 @@ onMounted(async () => {
 
   console.log('About to send fetch request for users...');
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/users`);
+    const params = {
+      pageNumber: 0,
+      pageSize: 8,
+    };
+    const response = await axios.get(`http://localhost:8080/api/v1/users`, { params });
     console.log('Received user data:', response.data);
 
     // Обновляем users.value, извлекая массив из поля data
@@ -163,6 +210,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error fetching user data:', error);
   }
+
 
   // Получаем список ролей
   await fetchRoles();
@@ -191,9 +239,6 @@ onMounted(async () => {
         <label for="username">Логин:</label>
         <input v-model="editedUser.username" id="username" type="text" required />
 
-        <label for="email">Email:</label>
-        <input v-model="editedUser.email" id="email" type="email" required />
-
         <label for="roles">Роли:</label>
         <div class="custom-select">
           <select v-model="editedUser.roles" @change="updateRoles" id="roles" multiple>
@@ -214,26 +259,26 @@ onMounted(async () => {
     <div class="table-wrapper">
       <table>
         <thead>
-        <tr>
-          <th><input type="checkbox" @change="selectAllUsers($event)" /></th>
-          <th>№</th>
-          <th>Логин</th>
-          <th>Email</th>
-          <th>Роли</th>
-          <th>Редактировать</th>
-          <th>Удалить</th>
-        </tr>
+          <tr>
+            <th><input type="checkbox" @change="selectAll($event)" /></th>
+            <th>№</th>
+            <th>ID</th>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Редактировать</th>
+            <th>Удалить</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(user, index) in filteredUsers" :key="user.id">
-          <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
-          <td>{{ index + 1 }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.email }}</td>
-          <td><span v-for="role in user.roles" :key="role.id">{{ role.name }}</span></td>
-          <td><button @click="editUser(user)">✏️</button></td>
-          <td><button @click="deleteUser(user.id)">❌</button></td>
-        </tr>
+          <tr v-for="(user, index) in filteredUsers" :key="user.id">
+            <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
+            <td>{{ index + 1 }}</td>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.roles.map(role => role.name).join(', ')}}</td>
+            <td><button @click="editUser(user)">✏️</button></td>
+            <td><button  @click="deleteUser(user.id)">❌</button></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -246,34 +291,52 @@ onMounted(async () => {
   <div class="event-table" v-else-if="currentTable === 'events'">
     <h2>Мероприятия "PRODUCT NAME"</h2>
     <div class="table-wrapper">
-      <table>
-        <thead>
-        <tr>
-          <th><input type="checkbox" @change="selectAllEvents($event)" /></th>
-          <th>№</th>
-          <th>Название</th>
-          <th>Описание</th>
-          <th>Дата</th>
-          <th>Редактировать</th>
-          <th>Удалить</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(event, index) in filteredEvents" :key="event.id">
-          <td><input type="checkbox" v-model="selectedEvents" :value="event.id" /></td>
-          <td>{{ index + 1 }}</td>
-          <td>{{ event.name }}</td>
-          <td>{{ event.summary }}</td>
-          <td>{{ new Date(event.date).toLocaleDateString() }}</td>
-          <td><button @click="editEvent(event.id)">✏️</button></td>
-          <td><button @click="deleteEvent(event.id)">❌</button></td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="footer">
-      <p>Всего мероприятий: {{ filteredEvents.length }}</p>
-    </div>
+        <table class="events-table">
+          <thead>
+          <tr>
+            <th>Выбрать</th>
+            <th>Название</th>
+            <th>Адрес</th>
+            <th>Дата и время</th>
+            <th>Состояние</th>
+            <th>Начало регистрации</th>
+            <th>Конец регистрации</th>
+            <th>Описание</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="event in filteredEvents" :key="event.id">
+            <td>
+              <input type="checkbox" :value="event.id" v-model="selectedEvents" @change="toggleSelectEvent(event.id)" />
+            </td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.address }}</td>
+            <td>{{ formatDate(event.date) }}</td>
+            <td>{{ getStatus(event.reg_open) }}</td>
+            <td>{{ formatDate(event.startRegistrationDate) }}</td>
+            <td>{{ formatDate(event.closeRegistrationDate) }}</td>
+            <td>{{ event.summary }}</td>
+            <td class="action-buttons">
+              <div
+                  class="dropdown"
+                  @mouseenter="toggleDropdown(event.id, true)"
+                  @mouseleave="handleMouseLeave(event.id)">
+                <button class="event-button blue-button">Действия</button>
+                <div v-if="isDropdownOpen === event.id" class="dropdown-menu">
+                  <button class="dropdown-item" @click="goToEventMemebersPage(event.id)">Участники</button>
+                  <button class="dropdown-item" @click="goToEditPage(event.id)">Изменить</button>
+                  <button class="dropdown-item" @click="copyLinkToClipboard(event.id)">Скопировать приглашение</button>
+                  <button class="dropdown-item" @click="goToEventPage(event.id)">Изменить шаблоны</button>
+                  <button class="dropdown-item delete" @click="deleteSelected">Удалить</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="active-events">Активных мероприятий: {{ events.length }}</div>
   </div>
 </template>
 
@@ -284,7 +347,6 @@ onMounted(async () => {
   margin: 0 auto;
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 1rem;
 }
 
@@ -305,7 +367,6 @@ onMounted(async () => {
 }
 
 header {
-  /* Logo */
   position: absolute;
   width: 291px;
   height: 100px;
@@ -327,17 +388,16 @@ h2 {
   font-size: 32px;
   font-weight: 700;
   line-height: 39px;
-
 }
 
 h2::after {
   content: "";
   display: block;
-  width: 100%; /* Установите нужную длину линии */
-  height: 3px; /* Толщина линии */
+  width: 100%;
+  height: 3px;
   background-color: black;
   position: absolute;
-  bottom: -10px; /* Положение линии относительно h2 */
+  bottom: -10px;
 }
 
 .switch-buttons {
@@ -376,13 +436,13 @@ h2::after {
   position: absolute;
   top: 229px;
   left: 375px;
-  width: 700px /* Adjust this value if needed */
+  width: 700px;
 }
 
 .table-wrapper {
   margin-top: 130px;
   overflow-y: auto;
-  max-height: 550px; /* Adjust this value based on your needs */
+  max-height: 550px;
   width: 1900px;
   position: absolute;
   top: 180px;
@@ -414,8 +474,57 @@ th {
   line-height: 26px;
 }
 
-button {
+/* Новые стили для кнопок действия и их дочерних кнопок */
+.action-button-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 
+.action-button {
+  position: relative;
+}
+
+.action-button .action-icons {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.action-button .action-icons button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.action-button .action-icons button:hover {
+  background-color: #f0f0f0;
+}
+
+.action-button:hover .action-icons {
+  display: block;
+}
+
+.action-button {
+  cursor: pointer;
+}
+
+.action-button:hover .action-icons button {
+  display: block;
 }
 
 button:hover {
