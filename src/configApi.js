@@ -1,3 +1,3 @@
- const config = {url: "http://localhost:8080"};
+ const config = {url: "http://event-manager-backend:8080"};
 
  export default config;
