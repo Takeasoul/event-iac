@@ -1,9 +1,11 @@
 import axios from 'axios';
+import {apiUrl} from "@/main.js";
+import config from "@/configApi.js";
 
 const publicRoutes = [
     '/:id/registration-form'
 ];
-
+axios.defaults.baseURL = config.url;
 // Функция для проверки, является ли маршрут публичным
 const isPublicRoute = (url) => {
     return publicRoutes.some(route => {

@@ -37,13 +37,6 @@ let config = {
     uploadUrl: ''
 };
 
-app.use(Vuex);
-app.use(Vueditor, config);
-// create a root instance
-
-
-
-
 createApp(App).use(CKEditor).use(VueTheMask).use(router).mount('#app');
 
-export const apiUrl = 'http://localhost:8080';
+export const apiUrl = 'http://77.222.38.40:8080';
