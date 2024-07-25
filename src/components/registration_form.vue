@@ -50,6 +50,7 @@ const route = useRoute();
 const router = useRouter();
 import {TheMask} from 'vue-the-mask'
 import { apiUrl } from '@/main.js';
+import config from "@/configApi.js";
 const formData = ref({
   middlename: '',
   firstname: '',
@@ -68,7 +69,7 @@ const eventName = ref('');
 
 const getEventInfo = async (eventId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
+    const response = await axios.get(`${config.url}/api/v1/events/${eventId}`);
     if (response.data && response.data.name && response.data.name.length > 0) {
       eventName.value = response.data.name;
     } else {
@@ -82,11 +83,11 @@ const getEventInfo = async (eventId) => {
 const submitForm = async () => {
   const eventId = route.params.id;
   try {
-    const response = await axios.post(`http://localhost:8080/api/v1/event-members`, formData.value);
+    const response = await axios.post(`${config.url}/api/v1/event-members`, formData.value);
     console.log('Registration successful:', response.data);
     const userId = response.data.id; // Получаем ID созданного пользователя
     router.push('/approve');
-    const emailResponse = await axios.get(`http://localhost:8080/api/email/greetings/${userId}`);
+    const emailResponse = await axios.get(`${config.url}/api/email/greetings/${userId}`);
     console.log('Email send successful:', emailResponse.data);
     // Можно добавить обработку успешной регистрации, например, переход на другую страницу
   } catch (error) {

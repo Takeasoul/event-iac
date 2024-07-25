@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import config from "@/configApi.js";
 
 const router = useRouter();
 
@@ -99,7 +100,7 @@ const showEventsTable = () => {
 
 const fetchRoles = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/v1/users/getRoles');
+    const response = await axios.get(`${config.url}/api/v1/users/getRoles```);
     roles.value = response.data || [];
   } catch (error) {
     console.error('Ошибка при получении ролей:', error);
@@ -190,7 +191,7 @@ onMounted(async () => {
       pageNumber: 0,
       pageSize: 8,
     };
-    const response = await axios.get(`http://localhost:8080/api/v1/events`, { params });
+    const response = await axios.get(`${config.url}/api/v1/events`, { params });
     console.log('Received data:', response.data);
 
     events.value = response.data.data || [];
@@ -204,7 +205,7 @@ onMounted(async () => {
       pageNumber: 0,
       pageSize: 8,
     };
-    const response = await axios.get(`http://localhost:8080/api/v1/users`, { params });
+    const response = await axios.get(`${config.url}/api/v1/users`, { params });
     console.log('Received user data:', response.data);
 
     users.value = response.data.data || [];

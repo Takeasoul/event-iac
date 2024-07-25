@@ -106,6 +106,7 @@ import 'ckeditor5/ckeditor5.css';
 import {useRoute, useRouter} from "vue-router";
 import axios from "axios";
 import router from "@/router.js";
+import config from "@/configApi.js";
 export default {
 
   name: 'App',
@@ -429,7 +430,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/templates/get/${this.evId}`);
+        const response = await axios.get(`${config.url}/api/templates/get/${this.evId}`);
         this.templates = response.data;
       } catch (error) {
         console.error('Error fetching templates', error);
@@ -442,7 +443,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/templates/${this.selectedTemplateId}/${this.evId}`);
+        const response = await axios.get(`${config.url}/api/templates/${this.selectedTemplateId}/${this.evId}`);
         this.templateContent = response.data;
         this.content = response.data;
       } catch (error) {
@@ -469,7 +470,7 @@ export default {
         const contentToSave = { content: this.content }; // Убедитесь, что `content` включает весь HTML, включая стили
         const typeLabel = this.selectedTemplateType;
 
-        await axios.post('http://localhost:8080/api/templates/save', contentToSave, {
+        await axios.post(`${config.url}/api/templates/save`, contentToSave, {
           params: {
             templateName: this.newTemplateName,
             eventId: this.evId,
@@ -489,7 +490,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/templates/download/${this.selectedTemplateId}/${this.evId}`, { responseType: 'blob' });
+        const response = await axios.get(`${config.url}/api/templates/download/${this.selectedTemplateId}/${this.evId}`, { responseType: 'blob' });
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;

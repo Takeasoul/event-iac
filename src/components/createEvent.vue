@@ -47,6 +47,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import axios from "axios";
 import { apiUrl } from '@/main.js';
+import config from "@/configApi.js";
 export default {
   setup() {
     const route = useRoute();
@@ -89,7 +90,7 @@ export default {
       this.form.closeRegistrationDate = Enddate.toISOString();
 
       try {
-        const response = await axios.post(`http://localhost:8080/api/v1/events`, this.form, {
+        const response = await axios.post(`${config.url}/api/v1/events`, this.form, {
           headers: {
             'Content-Type': 'application/json'
           }

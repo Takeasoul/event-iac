@@ -77,6 +77,7 @@
 import {defineComponent, ref, onMounted, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import axios from '../axios';
+import config from "@/configApi.js";
 
 export default defineComponent({
   setup() {
@@ -96,7 +97,7 @@ export default defineComponent({
           pageSize: 8,
           orgId: orgId,
         };
-        const response = await axios.get(`http://localhost:8080/api/v1/events`, {params});
+        const response = await axios.get(`${config.url}/api/v1/events`, {params});
         events.value = response.data.data || [];
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -171,7 +172,7 @@ export default defineComponent({
     const deleteSelected = (eventId) => {
       // Implement deletion logic here
       console.log('Deleting events with IDs:', eventId);
-      axios.delete(`http://localhost:8080/api/v1/events/${eventId}`)
+      axios.delete(`${config.url}/api/v1/events/${eventId}`)
         .then(response => {
           // Handle successful deletion
         })

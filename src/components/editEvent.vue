@@ -47,6 +47,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
 import axios from "axios";
+import config from "@/configApi.js";
 
 export default {
   setup() {
@@ -104,7 +105,7 @@ export default {
     onMounted(async () => {
       try {
         console.log(`Fetching event data for id: ${eventId}`);
-        const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
+        const response = await axios.get(`${config.url}/api/v1/events/${eventId}`);
         if (response.status === 200) {
           const data = response.data;
           console.log('Fetched event data:', data);
@@ -139,7 +140,7 @@ export default {
       const Enddate = new Date(form.value.closeRegistrationDate);
       form.value.closeRegistrationDate = Enddate.toISOString();
         console.log('ОТПРАВЛЯЮ', form.value)
-        const response = await axios.put(`http://localhost:8080/api/v1/events/${eventId}`, form.value, {
+        const response = await axios.put(`${config.url}/api/v1/events/${eventId}`, form.value, {
           headers: {
             'Content-Type': 'application/json'
           }

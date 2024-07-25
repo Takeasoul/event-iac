@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from "axios";
 import { apiUrl } from '@/main.js';
+import config from "@/configApi.js";
 // переменные для хранения данных
 const memberData = ref({
   firstName: '',
@@ -31,7 +32,7 @@ console.log(memberId);
 // получение данных с сервера
 const fetchMemeberInfo = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/event/memberInfo/${memberId}`);
+    const response = await axios.get(`${config.url}/api/event/memberInfo/${memberId}`);
     if (response.status !== 200) {
       throw new Error('Network response was not ok');
     }
@@ -55,7 +56,7 @@ const fetchMemeberInfo = async () => {
 
 const fetchEventInfo = async (eventId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
+    const response = await axios.get(`${config.url}/api/v1/events/${eventId}`);
     if (response.status !== 200) {
       throw new Error('Network response was not ok');
     }

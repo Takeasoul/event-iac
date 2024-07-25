@@ -37,7 +37,7 @@ const fetchMembers = async () => {
 // Fetching event details
 const fetchEvent = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/events/${eventId}`);
+    const response = await axios.get(`${config.url}/api/v1/events/${eventId}`);
     event.value = response.data || [];
   } catch (error) {
     console.error('Ошибка при получении данных мероприятия:', error);
@@ -83,7 +83,7 @@ const saveChanges = async () => {
   try {
     console.log('Редактируемый пользователь перед сохранением:', editingUser.value);
     console.log("status.id", editingUser.value.status)
-    await axios.put(`http://localhost:8080/api/v1/event-members/${editingUser.value.id}`, {
+    await axios.put(`${config.url}/api/v1/event-members/${editingUser.value.id}`, {
       ...editingUser.value,
       statusId: editingUser.value.status  // Передать status.id
     });
@@ -135,7 +135,7 @@ const selectAll = (event) => {
 const downloadBadges = async () => {
   try {
     const response = await axios({
-      url: `http://localhost:8080/api/document/pdf/badges`,
+      url: `${config.url}/api/document/pdf/badges`,
       method: 'GET',
       responseType: 'blob',
       params: { eventId },
@@ -159,8 +159,8 @@ const downloadBadges = async () => {
 
 const approve = async (userId) => {
   try {
-    await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "APPROVED" } });
-    await axios.get(`http://localhost:8080/api/email/${userId}`);
+    await axios.put(`${config.url}/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "APPROVED" } });
+    await axios.get(`${config.url}/api/email/${userId}`);
     users.value.find(user => user.id === userId).approved = true;
   } catch (error) {
     console.error('Ошибка при одобрении:', error);
@@ -169,7 +169,7 @@ const approve = async (userId) => {
 
 const unapprove = async (userId) => {
   try {
-    await axios.put(`http://localhost:8080/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "NOT_APPROVED" } });
+    await axios.put(`${config.url}/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "NOT_APPROVED" } });
     users.value.find(user => user.id === userId).approved = false;
   } catch (error) {
     console.error('Ошибка при отклонении:', error);
