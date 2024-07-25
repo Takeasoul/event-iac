@@ -5,10 +5,9 @@
       <select v-model="selectedTemplateId" @change="loadTemplate">
         <option v-for="template in templates" :key="template" :value="template">{{ template }}</option>
       </select>
-      <button @click="loadTemplate">Load Template</button>
     </div>
 
-    <div>
+    <div class="outer-container">
       <div class="main-container">
         <div class="editor-container editor-container_classic-editor" ref="editorContainerElement">
           <div class="editor-container__editor">
@@ -31,8 +30,9 @@
       <select v-model="selectedTemplateType">
         <option v-for="(type, key) in templateTypeMap" :key="key" :value="key">{{ type }}</option>
       </select>
-      <button @click="saveChanges">Save Changes</button>
-      <button @click="downloadTemplate">Download Template</button>
+      <button @click="saveChanges">Сохранить изменения</button>
+      <button @click="downloadTemplate">Скачать шаблон</button>
+      <button @click="goBack()">Назад</button>
     </div>
   </div>
 </template>
@@ -105,6 +105,7 @@ import juice from 'juice';
 import 'ckeditor5/ckeditor5.css';
 import {useRoute, useRouter} from "vue-router";
 import axios from "axios";
+import router from "@/router.js";
 export default {
 
   name: 'App',
@@ -517,38 +518,70 @@ export default {
       }
 
       return inlineStyles;
+    },
+
+    goBack() {
+      router.back();
     }
   },
 };
 </script>
 
-<style>
+<style scoped>
 .template-editor {
+  font-family: Arial, sans-serif;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin: 20px;
+  align-items: center;
 }
 
 .template-selector {
-  display: flex;
-  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.editor-preview {
-  display: flex;
-  gap: 20px;
+.template-selector select {
+  padding: 5px;
+  font-size: 16px;
 }
 
-.html-preview {
-  width: 50%;
+.template-selector button {
+  padding: 5px 10px;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.editor-container {
+  margin-bottom: 20px;
+  width: 80%;
+}
+
+
+.editor-container_classic-editor {
+  min-height: 600px;
   border: 1px solid #ccc;
-  padding: 10px;
-  background-color: #f9f9f9;
+  width: 100%;
 }
 
 .actions {
-  display: flex;
-  gap: 10px;
+  margin-top: 20px;
+}
+
+.actions input,
+.actions select {
+  padding: 5px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.actions button {
+  padding: 5px 10px;
+  font-size: 16px;
 }
 </style>

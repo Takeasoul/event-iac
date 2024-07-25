@@ -73,6 +73,33 @@ axios.interceptors.response.use(
     }
 );
 
+// Интерсептор для перехвата ошибок и повторных попыток запросов
+axios.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    async (error) => {
+        const originalRequest = error.config;
+
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            await refreshAccessToken();
+            const newToken = localStorage.getItem('accessToken');
+            axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+            return axios(originalRequest);
+        }
+
+        if (error.response.status === 403) {
+            const currentUrl = window.location.pathname;
+            if (!isPublicRoute(currentUrl)) {
+                window.location.href = '/login';
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 
 // Возвращает настроенный экземпляр Axios
 export default axios;
