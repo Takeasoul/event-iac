@@ -406,7 +406,6 @@ export default {
   computed: {
     templateTypeMap() {           // Добавьте здесь
       return {
-        BADGE: 'Шаблон бэйджей',
         GREETINGS: 'Шаблон приветственного письма',
         APPROVED: 'Шаблон письма после подтверждения',
         QR_PDF: 'Шаблон файла электронного билета'

@@ -135,7 +135,7 @@ const selectAll = (event) => {
 const downloadBadges = async () => {
   try {
     const response = await axios({
-      url: `http://localhost/api/document/pdf/badges`,
+      url: `http://localhost:8080/api/document/pdf/badges`,
       method: 'GET',
       responseType: 'blob',
       params: { eventId },
@@ -148,6 +148,12 @@ const downloadBadges = async () => {
     fileLink.click();
   } catch (error) {
     console.error('Ошибка при загрузке PDF:', error);
+    if (error.response) {
+      console.error('Response error status:', error.response.status);
+      console.error('Response error data:', error.response.data);
+    } else {
+      console.error('Error message:', error.message);
+    }
   }
 };
 

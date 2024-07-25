@@ -59,7 +59,7 @@
                   <button class="dropdown-item" @click="goToEventMemebersPage(event.id)">Участники</button>
                   <button class="dropdown-item" @click="goToEditPage(event.id)">Изменить</button>
                   <button class="dropdown-item" @click="copyLinkToClipboard(event.id)">Скопировать приглашение</button>
-                  <button class="dropdown-item" @click="goToEventPage(event.id)">Изменить шаблоны</button>
+                  <button class="dropdown-item" @click="goToTemplateEditPage(event.id)">Изменить шаблоны</button>
                   <button class="dropdown-item delete" @click="deleteSelected(event.id)">Удалить</button>
                 </div>
               </div>
@@ -116,8 +116,8 @@ export default defineComponent({
 
     const getStatus = (status) => (status ? 'Открыта' : 'Закрыта');
 
-    const goToEventPage = (eventId) => {
-      router.push({path: `/event/${eventId}`});
+    const goToTemplateEditPage = (eventId) => {
+      router.push({path: `/templates/${eventId}`});
     };
 
     const goToEventMemebersPage = (eventId) => {
@@ -213,7 +213,7 @@ export default defineComponent({
       events,
       formatDate,
       getStatus,
-      goToEventPage,
+      goToTemplateEditPage,
       goToEventMemebersPage,
       selectedEvents,
       toggleSelectAll,
