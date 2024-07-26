@@ -135,12 +135,30 @@ export default defineComponent({
 
     const copyLinkToClipboard = async (eventId) => {
       const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
-      try {
-        await navigator.clipboard.writeText(registrationLink);
-        console.log('Ссылка скопирована в буфер обмена:', registrationLink);
-        showNotification();
-      } catch (error) {
-        console.error('Не удалось скопировать ссылку:', error);
+
+      // Проверка поддержки Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(registrationLink);
+          console.log('Ссылка скопирована в буфер обмена:', registrationLink);
+          showNotification();
+        } catch (error) {
+          console.error('Не удалось скопировать ссылку:', error);
+        }
+      } else {
+        // Фолбек для старых браузеров или если нет HTTPS
+        const textArea = document.createElement("textarea");
+        textArea.value = registrationLink;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          console.log('Ссылка скопирована в буфер обмена:', registrationLink);
+          showNotification();
+        } catch (error) {
+          console.error('Не удалось скопировать ссылку:', error);
+        }
+        document.body.removeChild(textArea);
       }
     };
 
@@ -371,6 +389,7 @@ h2 {
 }
 
 .table-wrapper {
+  max-width: 1800px;
   overflow: visible;
   max-height: 600px;
   width: 100%;

@@ -14,12 +14,9 @@ import 'gitart-scroll-carousel/dist/GSLayoutNumeric.css';
 import 'quill/dist/quill.snow.css'; // Quill CSS
 
 import VueTheMask from 'vue-the-mask';
-import Quill from 'quill';
+
 import CKEditor from '@ckeditor/ckeditor5-vue';
 
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Vueditor from 'vueditor'
 
 import 'vueditor/dist/style/vueditor.min.css'
 

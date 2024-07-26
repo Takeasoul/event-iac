@@ -159,6 +159,7 @@ const downloadBadges = async () => {
 
 const approve = async (userId) => {
   try {
+    alert("Участник подтвержден!");
     await axios.put(`${config.url}/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "APPROVED" } });
     await axios.get(`${config.url}/api/email/${userId}`);
     users.value.find(user => user.id === userId).approved = true;
@@ -169,6 +170,7 @@ const approve = async (userId) => {
 
 const unapprove = async (userId) => {
   try {
+    alert("Участник отклонён!");
     await axios.put(`${config.url}/api/v1/event-members/approvement/${userId}`, null, { params: { approvement: "NOT_APPROVED" } });
     users.value.find(user => user.id === userId).approved = false;
   } catch (error) {

@@ -5,6 +5,7 @@ import galochkaImage from '@/assets/galochka.png';
 <template>
   <header>
     <img src="@/assets/Logo.svg" alt="Logo" class="logo">
+
   </header>
   <div class="container">
     <h1>Данные успешно отправлены!</h1>

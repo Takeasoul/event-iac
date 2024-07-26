@@ -39,6 +39,7 @@ const navigateToSignIn = async() => {
   <header>
     <img src="../assets/Logo.svg" alt="">
   </header>
+
   <div class="container">
     <div class = "form-background">
       <h1>Добро пожаловать!</h1>

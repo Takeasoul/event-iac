@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import {useRouter} from 'vue-router';
 import config from "@/configApi.js";
 
 const router = useRouter();
@@ -50,7 +50,7 @@ const selectAllEvents = (event) => {
 };
 
 const openEditModal = (user) => {
-  editingUser.value = { ...user };
+  editingUser.value = {...user};
   showEditModal.value = true;
 
   const userRole = roles.value.find(role => role.id === user.roles[0].id);
@@ -100,11 +100,20 @@ const showEventsTable = () => {
 
 const fetchRoles = async () => {
   try {
-    const response = await axios.get(`${config.url}/api/v1/users/getRoles```);
+    const response = await axios.get(`${config.url}/api/v1/users/getRoles`);
+    console.log(response.data);
     roles.value = response.data || [];
+    console.log(roles.value);
   } catch (error) {
     console.error('Ошибка при получении ролей:', error);
   }
+};
+
+const LogOut = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user_id')
+  router.push({path: `/login`});
 };
 
 const formatDate = (datetime) => {
@@ -150,19 +159,19 @@ const getStatusLabel = (status) => {
 };
 
 const goToTemplateEditPage = (eventId) => {
-  router.push({ path: `/templates/${eventId}` });
+  router.push({path: `/templates/${eventId}`});
 };
 
 const goToEventMemebersPage = (eventId) => {
-  router.push({ path: `/event/${eventId}/members` });
+  router.push({path: `/event/${eventId}/members`});
 };
 
 const goToEditPage = (eventId) => {
-  router.push({ path: `/editEvent/${eventId}/${localStorage.getItem("user_id")}` });
+  router.push({path: `/editEvent/${eventId}/${localStorage.getItem("user_id")}`});
 };
 
 const goToCreatePage = (eventId, orgId) => {
-  router.push({ path: `/createEvent/${route.params.orgid}/` });
+  router.push({path: `/createEvent/${route.params.orgid}/`});
 };
 
 const copyLinkToClipboard = async (eventId) => {
@@ -191,7 +200,7 @@ onMounted(async () => {
       pageNumber: 0,
       pageSize: 8,
     };
-    const response = await axios.get(`${config.url}/api/v1/events`, { params });
+    const response = await axios.get(`${config.url}/api/v1/events`, {params});
     console.log('Received data:', response.data);
 
     events.value = response.data.data || [];
@@ -205,7 +214,7 @@ onMounted(async () => {
       pageNumber: 0,
       pageSize: 8,
     };
-    const response = await axios.get(`${config.url}/api/v1/users`, { params });
+    const response = await axios.get(`${config.url}/api/v1/users`, {params});
     console.log('Received user data:', response.data);
 
     users.value = response.data.data || [];
@@ -218,15 +227,17 @@ onMounted(async () => {
 </script>
 
 
-
 <template>
   <header>
-    <img src="../assets/Logo.svg" alt="">
+    <img src="../assets/Logo.svg" alt="Logo">
+    <div class="header-buttons">
+      <button class="logout-button" @click="LogOut()">Выйти</button>
+    </div>
   </header>
   <div id="notification" class="notification">Ссылка скопирована в буфер обмена</div>
   <div class="search-and-switch">
     <div class="search-bar">
-      <input type="text" v-model="searchQuery" placeholder="🔍 Поиск" />
+      <input type="text" v-model="searchQuery" placeholder="🔍 Поиск"/>
     </div>
     <div class="switch-buttons">
       <button :class="{ active: currentTable === 'users' }" @click="showUsersTable">Пользователи</button>
@@ -239,7 +250,7 @@ onMounted(async () => {
     <div class="modal-content">
       <h3>Редактировать участника</h3>
       <label>ФИО:</label>
-      <input type="text" v-model="editingUser.username" placeholder="Логин" />
+      <input type="text" v-model="editingUser.username" placeholder="Логин"/>
       <div v-if="editingUser">
         <label for="role">Роль:</label>
         <select id="role" v-model="editingUser.roles[0]">
@@ -260,7 +271,7 @@ onMounted(async () => {
       <table class="users-table">
         <thead>
         <tr>
-          <th><input type="checkbox" @change="selectAllUsers($event)" /></th>
+          <th><input type="checkbox" @change="selectAllUsers($event)"/></th>
           <th>№</th>
           <th>ID</th>
           <th>Логин</th>
@@ -271,13 +282,17 @@ onMounted(async () => {
         </thead>
         <tbody>
         <tr v-for="(user, index) in filteredUsers" :key="user.id">
-          <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
+          <td><input type="checkbox" v-model="selectedUsers" :value="user.id"/></td>
           <td>{{ index + 1 }}</td>
           <td>{{ user.id }}</td>
           <td>{{ user.username }}</td>
-          <td>{{ user.roles.map(role => role.name).join(', ')}}</td>
-          <td><button @click="openEditModal(user)">✏️</button></td>
-          <td><button @click="deleteUser(user.id)">❌</button></td>
+          <td>{{ user.roles.map(role => role.name).join(', ') }}</td>
+          <td>
+            <button @click="openEditModal(user)">✏️</button>
+          </td>
+          <td>
+            <button @click="deleteUser(user.id)">❌</button>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -294,7 +309,7 @@ onMounted(async () => {
       <table class="events-table">
         <thead>
         <tr>
-          <th><input type="checkbox" @change="selectAllEvents($event)" /></th>
+          <th><input type="checkbox" @change="selectAllEvents($event)"/></th>
           <th>Название</th>
           <th>Адрес</th>
           <th>Дата и время</th>
@@ -307,7 +322,7 @@ onMounted(async () => {
         </thead>
         <tbody>
         <tr v-for="event in filteredEvents" :key="event.id">
-          <td><input type="checkbox" :value="event.id" v-model="selectedEvents" /></td>
+          <td><input type="checkbox" :value="event.id" v-model="selectedEvents"/></td>
           <td>{{ event.name }}</td>
           <td>{{ event.address }}</td>
           <td>{{ formatDate(event.date) }}</td>
@@ -363,6 +378,7 @@ onMounted(async () => {
   visibility: visible;
   opacity: 1;
 }
+
 .user-table,
 .event-table {
   width: 100%;
@@ -397,6 +413,27 @@ header {
   height: 100px;
   left: 42px;
   top: 10px;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.logout-button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgba(230, 57, 70, 1);
+  color: #fff;
+  cursor: pointer;
+  font-family: "Inter-regular";
+}
+
+.header-buttons input {
+  margin-right: 10px;
+  padding: 10px;
+  font-size: 16px;
 }
 
 h2 {
@@ -624,7 +661,6 @@ button:hover {
   font-family: "Inter-light";
   font-size: 16px;
 }
-
 
 
 .dropdown {
