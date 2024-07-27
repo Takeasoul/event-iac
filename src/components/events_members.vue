@@ -204,10 +204,9 @@ const getStatusLabel = (status) => {
 
 
 <template>
-  <header>
-    <img src="../assets/Logo.svg" alt="">
-  </header>
+
   <div class="user-table">
+    <img src="../assets/Logo.svg" alt="">
     <h2>Участники "{{ event.name }}"</h2>
     <div class="search-filter-container">
       <div class="search-bar">
@@ -309,7 +308,6 @@ const getStatusLabel = (status) => {
 
 header {
   /* Logo */
-  position: absolute;
   width: 291px;
   height: 100px;
   left: 20px;
@@ -415,7 +413,7 @@ table {
 
 
 td, th {
-  padding: 1rem;
+  padding: 0.5rem;
   text-align: center;
   background-color: #f0f0f0;
 }

@@ -69,9 +69,10 @@ const closeModal = () => {
 const saveUser = async () => {
   const role = roles.value.find(r => r.name === editingUser.value.roles[0]);
   if (role) {
-    editingUser.value.roles = [role.id]; // Присвоить ID роли перед сохранением
+    editingUser.value.roles = [{ id: role.id, name: role.name }]; // Присвоить массив объектов ролей перед сохранением
   }
 
+  console.log("ОТПРАВЛЯЕМ ЗАПРОС НА СОХРАНЕНИЕ ПОЛЬЗОВАТЕЛЯ");
   try {
     const response = await axios.put(`${config.url}/api/v1/users/admin`, editingUser.value, {
       params: {
@@ -172,15 +173,32 @@ const goToCreatePage = (eventId, orgId) => {
 
 const copyLinkToClipboard = async (eventId) => {
   const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
-  try {
-    await navigator.clipboard.writeText(registrationLink);
-    console.log('Ссылка скопирована в буфер обмена:', registrationLink);
-    showNotification();
-  } catch (error) {
-    console.error('Не удалось скопировать ссылку:', error);
+
+  // Проверка поддержки Clipboard API
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(registrationLink);
+      console.log('Ссылка скопирована в буфер обмена:', registrationLink);
+      showNotification();
+    } catch (error) {
+      console.error('Не удалось скопировать ссылку:', error);
+    }
+  } else {
+    // Фолбек для старых браузеров или если нет HTTPS
+    const textArea = document.createElement("textarea");
+    textArea.value = registrationLink;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      console.log('Ссылка скопирована в буфер обмена:', registrationLink);
+      showNotification();
+    } catch (error) {
+      console.error('Не удалось скопировать ссылку:', error);
+    }
+    document.body.removeChild(textArea);
   }
 };
-
 const showNotification = () => {
   const notification = document.getElementById('notification');
   notification.classList.add('show');
@@ -378,7 +396,7 @@ onMounted(async () => {
 .user-table,
 .event-table {
   width: 100%;
-  max-width: 1800px;
+  max-width: 80vw;
   margin: 2rem auto; /* Добавляем отступ сверху и снизу */
   background-color: #fff;
   border-radius: 5px;

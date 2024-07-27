@@ -3,7 +3,7 @@
     <header>
       <img src="../assets/Logo.svg" alt="Logo">
     </header>
-    <div class="container">
+    <div class="container" v-if="isRegistrationOpen">
       <div class="form-background">
         <h1>Регистрация на {{ eventName }}</h1>
 
@@ -34,8 +34,15 @@
           <button type="submit">Отправить</button>
         </form>
 
-
         <p class="bottom-text">Нажимая кнопку «Отправить», Вы соглашаетесь с Политикой конфиденциальности и условиями обслуживания.</p>
+      </div>
+    </div>
+    <div class="container" v-else>
+      <div class="form-background">
+        <div class="cancel">
+          <h1>Регистрация на мероприятие приостановлена</h1>
+          <p>К сожалению, регистрация на это мероприятие временно приостановлена. Пожалуйста, попробуйте позже.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -51,6 +58,7 @@ const router = useRouter();
 import {TheMask} from 'vue-the-mask'
 import { apiUrl } from '@/main.js';
 import config from "@/configApi.js";
+
 const formData = ref({
   middlename: '',
   firstname: '',
@@ -64,8 +72,7 @@ const formData = ref({
 });
 
 const eventName = ref('');
-
-//axios.defaults.baseURL = apiUrl;
+const isRegistrationOpen = ref(true);
 
 const getEventInfo = async (eventId) => {
   try {
@@ -77,6 +84,16 @@ const getEventInfo = async (eventId) => {
     }
   } catch (error) {
     console.error('Error fetching event information:', error);
+  }
+};
+
+const checkRegistrationStatus = async (eventId) => {
+  try {
+    const response = await axios.get(`${config.url}/api/v1/events/${eventId}/check`);
+    isRegistrationOpen.value = response.status === 200;
+  } catch (error) {
+    console.error('Error checking registration status:', error);
+    isRegistrationOpen.value = false;
   }
 };
 
@@ -96,9 +113,9 @@ const submitForm = async () => {
   }
 };
 
-
 // Загрузка информации о мероприятии при создании компонента
 getEventInfo(route.params.id);
+checkRegistrationStatus(route.params.id);
 
 </script>
 
@@ -132,7 +149,6 @@ header {
 
 .form-background {
   width: 800px;
-  height: 800px;
   padding: 30px;
   border-radius: 5px;
   background: rgb(255, 255, 255);
@@ -225,7 +241,6 @@ input:focus {
   color: rgb(63, 85, 101);
 }
 
-
 .bottom-text {
   display: flex;
   font-family: "Inter-regular";
@@ -234,6 +249,25 @@ input:focus {
   font-size: 18px;
   text-align: -webkit-center;
   margin: 10px;
+}
+
+.cancel {
+  text-align: center; /* Центрирует содержимое внутри элемента .cancel */
+  padding: 20px; /* Добавляет отступы вокруг содержимого */
+}
+
+.cancel h1 {
+  font-size: 32px; /* Размер шрифта для заголовка h1 */
+  color: rgb(63, 85, 101); /* Цвет шрифта для заголовка h1 */
+  font-family: "Inter-regular"; /* Шрифт для заголовка h1 */
+  margin-bottom: 20px; /* Отступ снизу от заголовка h1 */
+}
+
+.cancel p {
+  font-size: 25px; /* Размер шрифта для параграфа p */
+  color: rgb(0, 0, 0); /* Цвет шрифта для параграфа p */
+  font-family: "Inter-regular"; /* Шрифт для параграфа p */
+  margin: 0; /* Убирает отступы вокруг параграфа p */
 }
 
 @font-face {
@@ -245,5 +279,4 @@ input:focus {
   font-family: "Inter-light";
   src: url(/src/fonts/Inter-Light.ttf);
 }
-
 </style>

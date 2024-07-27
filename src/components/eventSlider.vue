@@ -19,7 +19,7 @@
         </div>
         <div class="right-controls">
           <button class="create-event blue-button" @click="goToCreatePage">Создать новое мероприятие</button>
-          <button class="delete-event blue-button" @click="deleteSelected">Удалить выбранные</button>
+<!--          <button class="delete-event blue-button" @click="deleteSelected">Удалить выбранные</button>-->
         </div>
       </div>
       <div class="table-wrapper">
@@ -40,7 +40,7 @@
           <tbody>
           <tr v-for="event in filteredEvents" :key="event.id">
             <td>
-              <input type="checkbox" :value="event.id" v-model="selectedEvents" @change="toggleSelectEvent(event.id)" />
+              <input type="checkbox" :value="event.id" v-model="selectedEvents[event.id]" @change="toggleSelectEvent(event.id)" />
             </td>
             <td>{{ event.name }}</td>
             <td>{{ event.address }}</td>
@@ -282,7 +282,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
   background-color: #fff;
 }
 
@@ -389,9 +388,9 @@ h2 {
 }
 
 .table-wrapper {
-  max-width: 1800px;
+  max-width: 80vw;
   overflow: visible;
-  max-height: 600px;
+  max-height: 60vh;
   width: 100%;
   position: relative; /* Чтобы выпадающее меню было внутри этого блока */
 }
@@ -406,7 +405,7 @@ h2 {
 .events-table th,
 .events-table td {
   border-bottom: 1px solid #ddd;
-  padding: 1rem;
+  padding: 0.5rem;
   text-align: center;
   font-family: "Inter-light";
 }
