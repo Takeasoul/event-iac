@@ -66,16 +66,24 @@ const closeModal = () => {
   editingUser.value = null;
 };
 
-const saveUser = () => {
+const saveUser = async () => {
   const role = roles.value.find(r => r.name === editingUser.value.roles[0]);
   if (role) {
     editingUser.value.roles = [role.id]; // Присвоить ID роли перед сохранением
   }
 
-  // Здесь код для сохранения пользователя на сервере
-
-  console.log('Сохранение пользователя:', editingUser.value);
-  closeModal();
+  try {
+    const response = await axios.put(`${config.url}/api/v1/users/admin`, editingUser.value, {
+      params: {
+        id: editingUser.value.id // Укажите ID пользователя как параметр запроса
+      }
+    });
+    console.log('Пользователь сохранен:', response.data);
+  } catch (error) {
+    console.error('Ошибка при сохранении пользователя:', error);
+  } finally {
+    closeModal();
+  }
 };
 
 const deleteUser = (userId) => {
@@ -145,18 +153,6 @@ const toggleDropdown = (eventId, isOpen) => {
   }
 };
 
-const getStatusLabel = (status) => {
-  switch (status) {
-    case 'CONSIDERATION':
-      return 'Рассмотрение';
-    case 'APPROVED':
-      return 'Одобрено';
-    case 'NOT_APPROVED':
-      return 'Отклонено';
-    default:
-      return 'Неизвестно';
-  }
-};
 
 const goToTemplateEditPage = (eventId) => {
   router.push({path: `/templates/${eventId}`});

@@ -100,7 +100,7 @@ onMounted(() => {
     <div class="member-card">
       <h1>{{eventData.name }}</h1>
       <h1>{{ formatDate(eventData.date) }}</h1>
-      <h1>{{ memberData.lastName + " " + memberData.firstName + " " + memberData.lastName }}</h1>
+      <h1>{{ memberData.lastName + " " + memberData.firstName + " " + memberData.middleName }}</h1>
       <h2>Компания: {{ memberData.company }}</h2>
       <h2>Должность: {{ memberData.position }}</h2>
       <h2>{{ memberData.email }}</h2>
