@@ -2,8 +2,9 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { apiUrl } from '@/main.js';
+import VueJwtDecode from 'vue-jwt-decode'
 import config from "@/configApi.js";
+
 const formData = ref({
   login: '',
   password: ''
@@ -24,6 +25,8 @@ const submitForm = async () => {
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('user_id', user_id);
     console.log('Login successful:', response.data);
+
+
 
     // Перенаправление на страницу с userId, если токен успешно получен
     if (user_id) {

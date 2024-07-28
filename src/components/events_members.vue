@@ -157,6 +157,45 @@ const downloadBadges = async () => {
   }
 };
 
+
+const downloadCSV = async () => {
+  try {
+    const response = await axios({
+      url: `${config.url}/api/document/csv/${eventId}`,
+      method: 'GET',
+      responseType: 'blob',
+    });
+
+    // Извлекаем имя файла из заголовка
+    const contentDisposition = response.headers['content-disposition'];
+    const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1].split(';')[0].replace(/"/g, '')
+        : 'default.csv'; // Имя файла по умолчанию
+
+    // Создаем объект URL и ссылку для загрузки
+    const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+    const fileLink = document.createElement('a');
+    fileLink.href = fileURL;
+    fileLink.setAttribute('download', filename);
+    document.body.appendChild(fileLink);
+    fileLink.click();
+
+    // Удаляем ссылку из DOM
+    document.body.removeChild(fileLink);
+  } catch (error) {
+    console.error('Ошибка при загрузке CSV:', error);
+    if (error.response) {
+      console.error('Response error status:', error.response.status);
+      console.error('Response error data:', error.response.data);
+    } else {
+      console.error('Error message:', error.message);
+    }
+  }
+};
+
+
+
+
 const approve = async (userId) => {
   try {
     alert("Участник подтвержден!");
@@ -216,6 +255,10 @@ const getStatusLabel = (status) => {
         <button :class="{ active: filterState === 'Рассмотрение' }" @click="filterByState('Рассмотрение')">Рассмотрение</button>
         <button :class="{ active: filterState === 'Одобрено' }" @click="filterByState('Одобрено')">Одобрено</button>
         <button :class="{ active: filterState === 'Отклонено' }" @click="filterByState('Отклонено')">Отклонено</button>
+        <button @click="downloadCSV()" class="downloadButtons">
+          Скачать выгрузку
+          <font-awesome-icon :icon="faDownload" class="csv-icon"/>
+        </button>
         <button @click="downloadBadges()" class="downloadButtons">
           Скачать бэйджи
           <font-awesome-icon :icon="faDownload" class="pdf-icon"/>
