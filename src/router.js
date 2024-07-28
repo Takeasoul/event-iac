@@ -11,6 +11,7 @@ import approve_registration from '@/components/approve_registration.vue';
 import createEvent from '@/components/createEvent.vue';
 import editEvent from '@/components/editEvent.vue';
 import templates_edit from "@/components/templates_edit.vue";
+import event_media from "@/components/event_media.vue"
 
 const routes = [
     { path: '/login', component: admin_sign_in },
@@ -25,6 +26,7 @@ const routes = [
     { path: '/createEvent/:orgid', component: createEvent },
     { path: '/editEvent/:evId/:orgId', component: editEvent },
     { path: '/templates/:evId', component: templates_edit },
+    { path: '/media/:evId', component: event_media }
 ];
 
 const router = createRouter({

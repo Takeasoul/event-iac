@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import VueJwtDecode from 'vue-jwt-decode'
 import config from "@/configApi.js";
 
 const formData = ref({

@@ -60,6 +60,7 @@
                   <button class="dropdown-item" @click="goToEditPage(event.id)">Изменить</button>
                   <button class="dropdown-item" @click="copyLinkToClipboard(event.id)">Скопировать приглашение</button>
                   <button class="dropdown-item" @click="goToTemplateEditPage(event.id)">Изменить шаблоны</button>
+                  <button class="dropdown-item" @click="goToMediaPage(event.id)">СМИ</button>
                   <button class="dropdown-item delete" @click="deleteSelected(event.id)">Удалить</button>
                 </div>
               </div>
@@ -132,7 +133,11 @@ export default defineComponent({
     const goToCreatePage = (eventId, orgId) => {
       router.push({path: `/createEvent/${route.params.orgid}/`});
     };
-
+    
+    const goToMediaPage = (eventId) => {
+      router.push({path: `/media/${eventId}`});
+    };
+    
     const copyLinkToClipboard = async (eventId) => {
       const registrationLink = `${window.location.origin}/${eventId}/registration-form`;
 
@@ -228,6 +233,7 @@ export default defineComponent({
       });
     });
 
+
     return {
       events,
       formatDate,
@@ -247,6 +253,7 @@ export default defineComponent({
       handleMouseLeave,
       goToCreatePage,
       filteredEvents,
+      goToMediaPage,
     };
   },
 });
