@@ -36,4 +36,4 @@ let config = {
 
 createApp(App).use(CKEditor).use(VueTheMask).use(router).mount('#app');
 
-export const apiUrl = 'http://77.222.38.40:8080';
+export const apiUrl = 'https://mkrit.ru';

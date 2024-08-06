@@ -11,7 +11,7 @@ const formData = ref({
 const router = useRouter();
 const submitForm = async () => {
   try {
-    const response = await axios.post(`${config.url}/api/v1/users`, formData.value, {
+    const response = await axios.post(`${config.url}/api/v1/users/admin`, formData.value, {
       headers: {
         'Content-Type': 'application/json'
       }

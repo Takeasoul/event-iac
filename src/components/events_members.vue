@@ -341,7 +341,7 @@ const getStatusLabel = (status) => {
 <style scoped>
 .user-table {
   width: 90%; /* Увеличьте ширину таблицы */
-  max-width: 1700px;
+  max-width: 80vw;
   margin: 0 auto;
   background-color: #fff;
   border-radius: 5px;

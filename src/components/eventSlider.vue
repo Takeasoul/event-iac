@@ -403,7 +403,8 @@ h2 {
 }
 
 .events-table {
-  width: 100%;
+  max-width: 80vw;
+  max-height: 60vh;
   border-collapse: collapse;
   margin-bottom: 40px;
   position: relative; /* Чтобы дочерние элементы, например, dropdown-menu, не перекрывали её */

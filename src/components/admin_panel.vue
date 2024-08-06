@@ -263,7 +263,7 @@ onMounted(async () => {
   <div v-if="showEditModal" class="modal-overlay">
     <div class="modal-content">
       <h3>Редактировать участника</h3>
-      <label>ФИО:</label>
+      <label>username:</label>
       <input type="text" v-model="editingUser.username" placeholder="Логин"/>
       <div v-if="editingUser">
         <label for="role">Роль:</label>

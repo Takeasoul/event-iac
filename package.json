@@ -1,6 +1,6 @@
 {
   "name": "event-iac",
-  "version": "0.0.9",
+  "version": "0.0.15",
   "private": true,
   "type": "module",
   "scripts": {

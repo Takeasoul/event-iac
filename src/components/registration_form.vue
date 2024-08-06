@@ -42,6 +42,10 @@
         <div class="cancel">
           <h1>Регистрация на мероприятие приостановлена</h1>
           <p>К сожалению, регистрация на это мероприятие временно приостановлена. Пожалуйста, попробуйте позже.</p>
+          <p>Дата начала регистрации на мероприятие:</p>
+          <p>{{startRegistrationDate}}</p>
+          <p>Дата конца регистрации на мероприятие:</p>
+          <p>{{closeRegistrationDate}}</p>
         </div>
       </div>
     </div>
@@ -49,14 +53,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import axios from 'axios';
-import { useRouter, useRoute } from 'vue-router';
-import VueInputMask from 'vue-input-mask';
+import {useRouter, useRoute} from 'vue-router';
+
 const route = useRoute();
 const router = useRouter();
-import {TheMask} from 'vue-the-mask'
-import { apiUrl } from '@/main.js';
+
 import config from "@/configApi.js";
 
 const formData = ref({
@@ -72,13 +75,31 @@ const formData = ref({
 });
 
 const eventName = ref('');
+
+const startRegistrationDate = ref('');
+
+const closeRegistrationDate = ref('');
+
 const isRegistrationOpen = ref(true);
 
 const getEventInfo = async (eventId) => {
   try {
     const response = await axios.get(`${config.url}/api/v1/events/${eventId}`);
-    if (response.data && response.data.name && response.data.name.length > 0) {
+    if (response.data && response.data.name
+        && response.data.name.length > 0
+        && response.data.startRegistrationDate.length > 0
+        && response.data.closeRegistrationDate.length > 0) {
       eventName.value = response.data.name;
+      startRegistrationDate.value = new Intl.DateTimeFormat('ru-RU', {
+        dateStyle: 'long',
+        timeStyle: 'short'
+      }).format(new Date(response.data.startRegistrationDate));
+
+
+      closeRegistrationDate.value = new Intl.DateTimeFormat('ru-RU', {
+        dateStyle: 'long',
+        timeStyle: 'short'
+      }).format(new Date(response.data.closeRegistrationDate));
     } else {
       console.error('Failed to fetch event information.');
     }
