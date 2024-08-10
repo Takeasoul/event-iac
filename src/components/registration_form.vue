@@ -46,6 +46,13 @@
           <p>{{startRegistrationDate}}</p>
           <p>Дата конца регистрации на мероприятие:</p>
           <p>{{closeRegistrationDate}}</p>
+          <p>Введите адрес электронной почты, для получения увдомелния о старте регистрации</p>
+          <form  @submit.prevent="submitAllertForm">
+            <div class="form-group">
+              <input v-model="allertFormData.email" type="email" id="email" name="email" placeholder="Корпоративный адрес" required>
+            </div>
+            <button type="submit">Отправить</button>
+          </form>
         </div>
       </div>
     </div>
@@ -72,6 +79,11 @@ const formData = ref({
   phone: '',
   statusId: '',
   eventId: route.params.id,
+});
+
+const allertFormData = ref({
+  email: '',
+  eventId: route.params.id
 });
 
 const eventName = ref('');
@@ -133,6 +145,19 @@ const submitForm = async () => {
     // Можно добавить обработку ошибки, например, показ сообщения об ошибке пользователю
   }
 };
+
+const submitAllertForm = async () => {
+  const eventId = route.params.id;
+  try{
+
+    const response = await axios.post(`${config.url}/api/v1/waiters`, allertFormData.value);
+    console.log('Отправилось на сервер: ', response.data);
+
+  }catch (error) {
+    console.error('Error submitting registration form:', error);
+    // Можно добавить обработку ошибки, например, показ сообщения об ошибке пользователю
+  }
+}
 
 // Загрузка информации о мероприятии при создании компонента
 getEventInfo(route.params.id);
